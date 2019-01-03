@@ -8,15 +8,19 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 void server_handshake() {
-  while(1){
+  int clients = 0;
+  int fifo;
+  char name[10];
+  char message[256];
+  char newname[10];
+  while(clients < 2){
     unlink(ACK);
     if(mkfifo(ACK, 0666) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
     }
     printf("Server created\n");
-    int fifo = open(ACK, O_RDONLY);
-    char name[10];
+    fifo = open(ACK, O_RDONLY);
     if(read(fifo, name, 256) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
@@ -33,7 +37,6 @@ void server_handshake() {
     }
     close(fifo);
     fifo = open(ACK, O_RDONLY);
-    char message[256];
     if(read(fifo, message, 256) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
@@ -41,53 +44,22 @@ void server_handshake() {
     close(fifo);
     printf("Handshake Complete\n");
 
-    int f = fork();
-    if(!f){
-
-      char newname[10];
-      sprintf(newname, "%d", getpid());
-      mkfifo(newname, 0666);
-      fifo = open(name, O_WRONLY);
-      if(fifo == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
-      }
-      if(write(fifo, newname, strlen(newname)) == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
-      }
-      close(fifo);
-
-      while(1){
-	/*
-        fifo = open(newname, O_RDONLY);
-        if(read(fifo, message, 256) == -1){
-          printf("ERROR: %s\n", strerror(errno));
-          exit(1);
-        }
-        close(fifo);
-        char* ptr;
-        int num = strtol(message, &ptr, 10);
-        printf("Calculating prime #%d\n", num);
-        num = sieve(num);
-        char output[256];
-        sprintf(output, "%d", num);
-        fifo = open(name, O_WRONLY);
-        if(fifo == -1){
-          printf("ERROR: %s\n", strerror(errno));
-          exit(1);
-        }
-        if(write(fifo, output, strlen(output) + 1) == -1){
-          printf("ERROR: %s\n", strerror(errno));
-          exit(1);
-        }
-        close(fifo);
-	*/
-      }
-
+    sprintf(newname, "%d", getpid() + clients);
+    mkfifo(newname, 0666);
+    fifo = open(name, O_WRONLY);
+    if(fifo == -1){
+      printf("ERROR: %s\n", strerror(errno));
+      exit(1);
     }
+    if(write(fifo, newname, strlen(newname)) == -1){
+      printf("ERROR: %s\n", strerror(errno));
+      exit(1);
+    }
+    close(fifo);
+
   }
 }
+
 
 
 /*=========================
@@ -155,28 +127,6 @@ void client_handshake() {
     wait(&status);
   }
   while(1){
-    /*
-    printf("Enter a number, n, to find the nth prime\n");
-    char input[256];
-    scanf("%[^\n]", input);
-    getchar();
-    fifo = open(newname, O_WRONLY);
-    if(write(fifo, input, strlen(input) + 1) == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo);
-    fifo = open(name, O_RDONLY);
-    if(fifo == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    if(read(fifo, message, 256) == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo);
-    printf("nth prime: %s\n", message);
-    */
+    
   }
 }

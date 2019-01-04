@@ -11,6 +11,8 @@ void server_handshake() {
   int clients = 0;
   int fifo;
   char name[10];
+  char name1[10];
+  char name2[10];
   char message[256];
   char newname[10];
   while(clients < 2){
@@ -41,6 +43,11 @@ void server_handshake() {
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
     }
+    if(clients == 0){
+      strcpy(name1,name);
+    }else{
+      strcpy(name2,name);
+    }
     close(fifo);
     printf("Handshake Complete\n");
 
@@ -56,7 +63,19 @@ void server_handshake() {
       exit(1);
     }
     close(fifo);
-
+    clients++;
+  }
+  int fifo1 = open(name1, O_WRONLY);
+  int fifo2 = open(name2, O_WRONLY);
+  if(write(fifo1, "ready", strlen("ready")) == -1){
+    printf("ERROR: %s\n", strerror(errno));
+    exit(1);
+  }
+  if(write(fifo2, "ready", strlen("ready")) == -1){
+    printf("ERROR: %s\n", strerror(errno));
+    exit(1);
+  }
+  while(1){
   }
 }
 
@@ -120,8 +139,17 @@ void client_handshake() {
     command[0] = "java";
     command[1] = "Tetris";
     command[2] = NULL;
-    execvp(command[0], command);
-    printf("%s\n", strerror(errno));
+    printf("waiting for other player to join\n");
+    char ready[256];
+    fifo = open(name, O_RDONLY);
+    if(read(fifo, ready, 256) == -1){
+      printf("ERROR: %s\n", strerror(errno));
+      exit(1);
+    }
+    printf("%s\n", ready);
+    if(strcmp(ready, "ready") == 0){
+      execvp(command[0], command);
+    }
   }else{
     int status;
     wait(&status);

@@ -67,7 +67,7 @@ void server_handshake() {
   }
   int fifo1 = open(name1, O_WRONLY);
   int fifo2 = open(name2, O_WRONLY);
-  if(write(fifo1, "ready", strlen("ready")) == -1){
+  if(write(fifo1, "client1", strlen("client1")) == -1){
     printf("ERROR: %s\n", strerror(errno));
     exit(1);
   }
@@ -135,26 +135,24 @@ void client_handshake() {
   close(fifo);
   int f = fork();
   if(!f){
-    char* command[3];
+    mkfifo(getpid() + 1, 0666);
+    char* command[4];
     command[0] = "java";
     command[1] = "Tetris";
-    command[2] = NULL;
+    sprintf(command[2], "%d", getpid() + 1);
+    command[3] = NULL;
     printf("waiting for other player to join\n");
-    char ready[256];
     fifo = open(name, O_RDONLY);
     if(read(fifo, ready, 256) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
     }
-    printf("%s\n", ready);
-    if(strcmp(ready, "ready") == 0){
-      execvp(command[0], command);
-    }
+    execvp(command[0], command);
   }else{
     int status;
     wait(&status);
   }
   while(1){
-    
+
   }
 }

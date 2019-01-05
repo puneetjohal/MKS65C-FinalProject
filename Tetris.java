@@ -23,7 +23,7 @@ public class Tetris extends JFrame implements ActionListener{
   private JPanel sidebar;
   private predict predictor;
   private hold held;
-  public Tetris(){
+  public Tetris(int pid){
     this.setTitle("Tetris");
     this.setSize(800,1000);
     this.setLocation(100,0);
@@ -74,7 +74,7 @@ public class Tetris extends JFrame implements ActionListener{
     level.setFont(new Font("Serif",Font.PLAIN,55));
     heldPiece.setFont(new Font("Serif",Font.PLAIN,30));
     nextPiece.setFont(new Font("Serif",Font.PLAIN,30));
-    matrix=new Board(this);
+    matrix=new Board(this, pid);
     pane.add(screen, BorderLayout.PAGE_START);
     GridBagConstraints gbc=new GridBagConstraints();
     gbc.gridy=1;
@@ -84,7 +84,7 @@ public class Tetris extends JFrame implements ActionListener{
     screen.add(start, gbc);
     gbc.gridy=2;
     screen.add(inst, gbc);
-  
+
 
     pane.add(matrix);
     pane.add(sidebar);
@@ -186,9 +186,9 @@ public class Tetris extends JFrame implements ActionListener{
   public JLabel getLevel(){
     return level;
   }
-    
+
   public static void main(String[] args){
-    Tetris t=new Tetris();
+    Tetris t=new Tetris(Integer.parseInt(args[0]));
     t.setVisible(true);
   }
 }

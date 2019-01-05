@@ -3,14 +3,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 public class Board extends JPanel implements ActionListener, KeyListener{
-    
+
     //The score JLabel is modified from this class by using the get method in parent class
     private JLabel score;
     private JLabel curLevel;
     private predict next;
     private hold held;
     public int newScore;
-    
+
     //Timer makes each piece move down at a fixed rate
     private Timer timer;
     private int level;
@@ -27,7 +27,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     private int ycor;
     private int orientation;
     private boolean moving;
-    
+
     //Used when speeding up the block so that it moves a smaller distance, but more frequently
     private int displacement;
 
@@ -35,7 +35,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     private Tetrimino t;
 
     //Creates the actual game
-    public Board(Tetris parent) {
+    public Board(Tetris parent, int pid) {
 	score = parent.getScore();
 	next = parent.getNext();
 	held = parent.getHold();
@@ -77,7 +77,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    next.setShape(t.randGen());
 	    moving = true;
 	}
-	
+
 	//Creates the shape that is moving
 	for(int i=0; i<t.getLen(curShape, ori); i++){
 	    for(int j=0; j<t.getWid(curShape, ori); j++){
@@ -237,9 +237,9 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 		    if(coordTable[y][x] >= 1 || (y < 18 && coordTable[y+1][x] >= 1)){
 			canRotate = false;
 		    }
-		}	
+		}
 	    }
-	    
+
 	    //If the shape can be rotated, then its orentation is changed
 	    if(canRotate){
 		orientation = ori;
@@ -257,11 +257,11 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    for(int y = ycor; y<t.getLen(curShape, ori)+ycor; y++){
 		for(int x = xcor; x<t.getWid(curShape, ori)+xcor; x++){
 		    if(coordTable[y][x] >= 1 || (y < 18 && coordTable[y+1][x] >= 1)){
-			canRotate = false;   
+			canRotate = false;
 		    }
 		}
 	    }
-	    
+
 	    //If the shape can be rotated, then its orentation is changed
 	    if(canRotate){
 		orientation = ori;
@@ -277,7 +277,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    for(int y=ycor; y<ycor + t.getLen(curShape, orientation); y++){
 		for(int x=xcor; x<xcor + t.getWid(curShape, orientation); x++){
 		    if(coordTable[y][x+1] >= 1){
-		        canMove = false;    
+		        canMove = false;
 		    }
 		}
 	    }
@@ -294,7 +294,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	boolean canMove = true;
 	if(xcor - t.getWid(curShape, orientation) >= -(t.getWid(curShape, orientation))+1){
 	    for(int y=ycor; y< ycor + t.getLen(curShape, orientation); y++){
-		for(int x=xcor; x<xcor+t.getWid(curShape, orientation); x++){ 
+		for(int x=xcor; x<xcor+t.getWid(curShape, orientation); x++){
 		    if(coordTable[y][x-1] >= 1){
 			canMove = false;
 		    }
@@ -448,7 +448,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	}
     }
 
-    //If the restart button is pressed, restart the panel, coordTable, and the current piece being moved 
+    //If the restart button is pressed, restart the panel, coordTable, and the current piece being moved
     public void restart(){
 	repaint();
 	revalidate();

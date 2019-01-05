@@ -136,7 +136,7 @@ void client_handshake() {
   int f = fork();
   if(!f){
     char pid[10];
-    sprintf(pid, "%d", getpid() + 1)
+    sprintf(pid, "%d", getpid() + 1);
     mkfifo(pid, 0666);
     char* command[4];
     command[0] = "java";

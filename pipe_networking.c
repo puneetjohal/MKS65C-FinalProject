@@ -135,14 +135,17 @@ void client_handshake() {
   close(fifo);
   int f = fork();
   if(!f){
-    mkfifo(getpid() + 1, 0666);
+    char pid[10];
+    sprintf(pid, "%d", getpid() + 1)
+    mkfifo(pid, 0666);
     char* command[4];
     command[0] = "java";
     command[1] = "Tetris";
-    sprintf(command[2], "%d", getpid() + 1);
+    strcpy(command[2], pid);
     command[3] = NULL;
     printf("waiting for other player to join\n");
     fifo = open(name, O_RDONLY);
+    char ready[10];
     if(read(fifo, ready, 256) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);

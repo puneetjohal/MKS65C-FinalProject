@@ -1,7 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.io.*;
 public class Board extends JPanel implements ActionListener, KeyListener{
 
     //The score JLabel is modified from this class by using the get method in parent class
@@ -36,30 +37,52 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
     //Creates the actual game
     public Board(Tetris parent, int pid) {
-	score = parent.getScore();
-	next = parent.getNext();
-	held = parent.getHold();
-	curLevel = parent.getLevel();
-	t = new Tetrimino();
-	setBackground(Color.WHITE);
-	newScore = 0;
-	coordTable = new int[20][10];
+    	score = parent.getScore();
+    	next = parent.getNext();
+    	held = parent.getHold();
+    	curLevel = parent.getLevel();
+    	t = new Tetrimino();
+    	setBackground(Color.WHITE);
+    	newScore = 0;
+    	coordTable = new int[20][10];
 
-	//Calls actionPerformed
-	time = 300;
-	level = 1;
-	clearedLines=0;
-	linesToClear=5;
-	timer=new Timer(time, this);
-	timer.start();
-	xcor = 4;
-	ycor = 0;
-	orientation = 0;
-	displacement = 0;
-	moving = false;
-	addKeyListener(this);
-	setFocusable(true);
-	setFocusTraversalKeysEnabled(false);
+    	//Calls actionPerformed
+    	time = 300;
+    	level = 1;
+    	clearedLines=0;
+    	linesToClear=5;
+    	timer=new Timer(time, this);
+    	timer.start();
+    	xcor = 4;
+    	ycor = 0;
+    	orientation = 0;
+    	displacement = 0;
+    	moving = false;
+    	addKeyListener(this);
+    	setFocusable(true);
+    	setFocusTraversalKeysEnabled(false);
+
+      String name = String.valueOf((int)(Math.random() * 10000));
+      try{
+         File f = new File(String.valueOf(pid));
+         FileWriter pipe = new FileWriter(f);
+         pipe.write(name);
+         pipe.flush();
+         pipe.close();
+       }catch(FileNotFoundException e){
+         System.exit(1);
+       }
+       /*
+       try{
+         File f2 = new File(name);
+         Scanner in = new Scanner(f2);
+         while(in.hasNext()){
+           System.out.println(in.nextLine());
+         }
+       }catch(Exception e){
+         System.exit(1);
+       }
+       */
     }
 
     //Creates all the shapes currently on the board and the shape being moved

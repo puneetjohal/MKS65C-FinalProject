@@ -133,10 +133,10 @@ void client_handshake() {
     exit(1);
   }
   close(fifo);
+  char pid[10];
+  sprintf(pid, "%d", getpid() + 1);
   int f = fork();
   if(!f){
-    char pid[10];
-    sprintf(pid, "%d", getpid() + 1);
     mkfifo(pid, 0666);
     char* command[4];
     command[0] = "java";
@@ -155,7 +155,16 @@ void client_handshake() {
     int status;
     wait(&status);
   }
-  while(1){
-
+  fifo = open(pid, O_RDONLY);
+  if(fifo == -1){
+    printf("ERROR: %s\n", strerror(errno));
+    exit(1);
   }
+  char javaname[10];
+  if(read(fifo, javaname, 10) == -1){
+    printf("ERROR: %s\n", strerror(errno));
+    exit(1);
+  }
+  pritnf("Java pipe name: %s\n", javaname);
+  close(fifo);
 }

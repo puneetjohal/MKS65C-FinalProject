@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.io.*;
 public class Board extends JPanel implements ActionListener, KeyListener{
 
@@ -69,7 +69,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
          pipe.write(name);
          pipe.flush();
          pipe.close();
-       }catch(FileNotFoundException e){
+       }catch(IOException e){
          System.exit(1);
        }
        /*

@@ -165,6 +165,6 @@ void client_handshake() {
     printf("ERROR: %s\n", strerror(errno));
     exit(1);
   }
-  pritnf("Java pipe name: %s\n", javaname);
+  printf("Java pipe name: %s\n", javaname);
   close(fifo);
 }

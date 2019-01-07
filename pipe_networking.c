@@ -142,7 +142,8 @@ void client_handshake() {
     command[0] = "java";
     command[1] = "Tetris";
     strcpy(command[2], pid);
-    command[3] = NULL;
+    command[3] = NULL; //PROBLEM
+    printf("testing\n"); //DOESNT gets here
     printf("waiting for other player to join\n");
     fifo = open(name, O_RDONLY);
     char ready[10];

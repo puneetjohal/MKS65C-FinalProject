@@ -133,15 +133,18 @@ void client_handshake() {
     exit(1);
   }
   close(fifo);
-  char pid[10];
-  sprintf(pid, "%d", getpid() + 1);
+  char javapipeIN[10];
+  char javapipeOUT[10];
+  sprintf(javapipeIN, "%d", getpid() + 10);
+  sprintf(javapipeOUT, "%d", getpid() + 20);
+  mkfifo(javapipeIN, 0666);
+  mkfifo(javapipeOUT, 0666);
   int f = fork();
   if(!f){
-    mkfifo(pid, 0666);
     char* command[4];
     command[0] = "java";
     command[1] = "Tetris";
-    command[2] = pid;
+    command[2] = javapipeIN;
     command[3] = NULL;
     printf("waiting for other player to join\n");
     fifo = open(name, O_RDONLY);
@@ -155,16 +158,16 @@ void client_handshake() {
     int status;
     wait(&status);
   }
-  fifo = open(pid, O_RDONLY);
-  if(fifo == -1){
+  
+  fifo = open(javapipeIN, O_RDONLY);
+  char javamess[10];
+  if(read(fifo, javamess, 10) == -1){
     printf("ERROR: %s\n", strerror(errno));
     exit(1);
   }
-  char javaname[10];
-  if(read(fifo, javaname, 10) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  printf("Java pipe name: %s\n", javaname);
+  printf("Java message: %s\n", javamess);
+  close(fifo);
+  fifo = open(javapipeOUT, O_WRONLY);
+  write(fifo, "AYO", 4);
   close(fifo);
 }

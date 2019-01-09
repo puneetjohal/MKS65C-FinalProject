@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.io.*;
 public class Board extends JPanel implements ActionListener, KeyListener{
 
@@ -62,27 +63,34 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-      String name = String.valueOf((int)(Math.random() * 10000));
-      try{
-         File f = new File(String.valueOf(pid));
-         FileWriter pipe = new FileWriter(f);
-         pipe.write(name);
-         pipe.flush();
-         pipe.close();
-       }catch(IOException e){
-         System.exit(1);
-       }
-       /*
-       try{
-         File f2 = new File(name);
-         Scanner in = new Scanner(f2);
-         while(in.hasNext()){
-           System.out.println(in.nextLine());
-         }
-       }catch(Exception e){
-         System.exit(1);
-       }
-       */
+	System.out.println("This is a test");
+	System.out.println(pid);
+
+	try{
+	    System.out.println("ok");
+	    File f = new File(String.valueOf(pid));
+	    System.out.println("ok");
+	    FileWriter pipe = new FileWriter(f);
+	    System.out.println("ok");
+	    pipe.write("hi");
+	    System.out.println("ok");
+	    pipe.flush();
+	    System.out.println("ok");
+	    pipe.close();
+	    System.out.println("ok");
+	}catch(Exception e){
+	    System.exit(1);
+	}
+	try{
+	    File f2 = new File(String.valueOf(pid + 10));
+	    Scanner in = new Scanner(f2);
+	    while(in.hasNext()){
+		System.out.println(in.nextLine());
+		
+	    }
+	}catch(Exception e){
+	    System.exit(1);
+	}
     }
 
     //Creates all the shapes currently on the board and the shape being moved

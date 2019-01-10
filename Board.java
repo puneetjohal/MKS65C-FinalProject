@@ -36,6 +36,10 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     //Used to call the functions needed to get the shapes and their dimensions
     private Tetrimino t;
 
+    //Scanner for reading from named pipe, Filewriter for writing to pipe
+    private Scanner in;
+    private FileWriter out;
+    
     //Creates the actual game
     public Board(Tetris parent, int pid) {
     	score = parent.getScore();
@@ -65,10 +69,10 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
 	try{
 	    File pipe1 = new File(String.valueOf(pid));
-	    FileWriter out = new FileWriter(pipe1);
-	    out.write("hi");
-	    out.flush();
-	    out.close();
+	    out = new FileWriter(pipe1);
+
+	    File pipe2 = new File(String.valueOf(pid + 10));
+	    in = new Scanner(pipe2);
 
 	}catch(Exception e){
 	    System.exit(1);

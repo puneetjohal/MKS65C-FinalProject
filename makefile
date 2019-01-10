@@ -3,7 +3,7 @@ all: client server
 client: client.o pipe_networking.o
 	gcc -o client client.o pipe_networking.o
 
-server: basic_server.o pipe_networking.o 
+server: basic_server.o pipe_networking.o
 	gcc -o server basic_server.o pipe_networking.o
 
 client.o: client.c pipe_networking.h
@@ -18,3 +18,9 @@ pipe_networking.o: pipe_networking.c pipe_networking.h
 clean:
 	rm *.o
 	rm *~
+
+run_server: server
+	./server
+
+run_client: client
+	./client

@@ -155,7 +155,7 @@ void client_handshake() {
     }
     execvp(command[0], command);
   }
-}
 
-void go() {
+  while(1){
+  }
 }

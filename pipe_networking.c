@@ -67,7 +67,7 @@ void server_handshake() {
   }
   int fifo1 = open(name1, O_WRONLY);
   int fifo2 = open(name2, O_WRONLY);
-  if(write(fifo1, "client1", strlen("client1")) == -1){
+  if(write(fifo1, "ready", strlen("ready")) == -1){
     printf("ERROR: %s\n", strerror(errno));
     exit(1);
   }
@@ -154,20 +154,5 @@ void client_handshake() {
       exit(1);
     }
     execvp(command[0], command);
-  }else{
-    int status;
-    wait(&status);
   }
-  
-  fifo = open(javapipeIN, O_RDONLY);
-  char javamess[10];
-  if(read(fifo, javamess, 10) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  printf("Java message: %s\n", javamess);
-  close(fifo);
-  fifo = open(javapipeOUT, O_WRONLY);
-  write(fifo, "AYO", 4);
-  close(fifo);
 }

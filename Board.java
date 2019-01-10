@@ -63,31 +63,13 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-	System.out.println("This is a test");
-	System.out.println(pid);
+	try{
+	    File pipe1 = new File(String.valueOf(pid));
+	    FileWriter out = new FileWriter(pipe1);
+	    out.write("hi");
+	    out.flush();
+	    out.close();
 
-	try{
-	    System.out.println("ok");
-	    File f = new File(String.valueOf(pid));
-	    System.out.println("ok");
-	    FileWriter pipe = new FileWriter(f);
-	    System.out.println("ok");
-	    pipe.write("hi");
-	    System.out.println("ok");
-	    pipe.flush();
-	    System.out.println("ok");
-	    pipe.close();
-	    System.out.println("ok");
-	}catch(Exception e){
-	    System.exit(1);
-	}
-	try{
-	    File f2 = new File(String.valueOf(pid + 10));
-	    Scanner in = new Scanner(f2);
-	    while(in.hasNext()){
-		System.out.println(in.nextLine());
-		
-	    }
 	}catch(Exception e){
 	    System.exit(1);
 	}

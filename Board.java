@@ -67,6 +67,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
+	/*
 	try{
 	    File pipe1 = new File(String.valueOf(pid));
 	    out = new FileWriter(pipe1);
@@ -74,9 +75,11 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    File pipe2 = new File(String.valueOf(pid + 10));
 	    in = new Scanner(pipe2);
 
+	    System.out.println(12);
 	}catch(Exception e){
 	    System.exit(1);
 	}
+	*/
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -85,6 +88,16 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	int row = xcor*40;
 	int col = ycor*40+displacement;
 	int ori = orientation;
+
+	//Checking if message is received from client
+	/*
+	String message;
+	if(in.hasNext()){
+	    message = in.nextLine();
+	}
+	*/
+
+	
 	if(!moving){
 	    if(curShape == null){
 		curShape = t.randGen();
@@ -352,16 +365,6 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	return false;
     }
 
-    //Stops the timer so that actionCommand isn't called anymore and the game stops
-    public void pause(){
-	timer.stop();
-    }
-
-    //Starts the timer so that actionCommand is called and the game resumes
-    public void play(){
-	timer.start();
-    }
-
     //Start from the end of the board and if there is a full line of shapes, call clearRow to clear that row and keep checking the rows above
     private void isFilled(){
 	ArrayList<Integer> rows = new ArrayList<Integer> ();
@@ -463,28 +466,6 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 		displacement = 0;
 	    }
 	}
-    }
-
-    //If the restart button is pressed, restart the panel, coordTable, and the current piece being moved
-    public void restart(){
-	repaint();
-	revalidate();
-	coordTable = new int[20][10];
-	score.setText("Score:0");
-	curLevel.setText("Level:1");
-	newScore = 0;
-	timer.start();
-	xcor = 4;
-	ycor = 0;
-	orientation = 0;
-	displacement = 0;
-	level = 1;
-	linesToClear = 5;
-	clearedLines = 0;
-	moving = false;
-	next.setShape(null);
-	held.setShape(null);
-	curShape = null;
     }
 
     //Check if the player lost and if they did then end the game

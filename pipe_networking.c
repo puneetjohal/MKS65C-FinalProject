@@ -10,7 +10,7 @@
 void server_handshake() {
   int clients = 0;
   int fifo;
-  char name[10];
+  char name[256];
   char name1[10];
   char name2[10];
   char in1[10];

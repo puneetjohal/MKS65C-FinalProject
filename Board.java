@@ -80,13 +80,15 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	int ori = orientation;
 
 	//Checking if message is received from client
-	f = new File(String.valueOf(pid + 10));
-  in = new Scanner(f);
-	if(in.hasNext()){
-	    System.out.println(in.nextLine());
-	}
-  in.close();
-
+  try{
+  	f = new File(String.valueOf(pid + 10));
+    in = new Scanner(f);
+  	if(in.hasNext()){
+  	    System.out.println(in.nextLine());
+  	}
+    in.close();
+  }catch(Exception e){
+  }
 
 	if(!moving){
 	    if(curShape == null){
@@ -388,11 +390,14 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	}
 
   //Networking, send number of lines completed
-  f = new File(String.valueOf(pid));
-  out = new FileWriter(f);
-  out.write(String.valueOf(lines));
-  out.flush();
-  out.close();
+  try{
+    f = new File(String.valueOf(pid));
+    out = new FileWriter(f);
+    out.write(String.valueOf(lines));
+    out.flush();
+    out.close();
+  }catch(Exception e){
+  }
 
 	int multiplier = 0;
 	if(lines == 1){
@@ -470,11 +475,14 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     public boolean end(){
 	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){
 	    timer.stop();
-      f = new File(String.valueOf(pid));
-      out = new FileWriter(f);
-      out.write("0");
-      out.flush();
-      out.close();
+      try{
+        f = new File(String.valueOf(pid));
+        out = new FileWriter(f);
+        out.write("0");
+        out.flush();
+        out.close();
+      }catch(Exception e){
+      }
 	    return true;
 	}
 	return false;

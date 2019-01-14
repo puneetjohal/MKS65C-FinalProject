@@ -491,7 +491,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	held.setShape(null);
 	curShape = null;
     }
-    
+
     //Check if the player lost and if they did then end the game
     public boolean end(){
 	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){

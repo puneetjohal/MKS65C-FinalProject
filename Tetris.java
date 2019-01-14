@@ -48,7 +48,7 @@ public class Tetris extends JFrame implements ActionListener{
 
     pane.setLayout(new GridLayout());
     pane.add(matrix);
-    matrix.restert();
+    matrix.restart();
     pane.add(sidebar);
     matrix.setVisible(true);
     matrix.requestFocus();

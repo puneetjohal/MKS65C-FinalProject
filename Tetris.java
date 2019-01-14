@@ -46,16 +46,20 @@ public class Tetris extends JFrame implements ActionListener{
     nextPiece.setFont(new Font("Serif",Font.PLAIN,30));
     matrix=new Board(this, pid);
 
+    pane.setLayout(new GridLayout());
     pane.add(matrix);
     pane.add(sidebar);
     matrix.setVisible(true);
-    sidebar.setVisible(true);
+    matrix.requestFocus();
     sidebar.add(nextPiece);
     sidebar.add(predictor);
     sidebar.add(heldPiece);
     sidebar.add(held);
     sidebar.add(score);
     sidebar.add(level);
+    predictor.setVisible(true);
+    held.setVisible(true);
+    sidebar.setVisible(true);
     sidebar.setBackground(Color.LIGHT_GRAY);
 
   }

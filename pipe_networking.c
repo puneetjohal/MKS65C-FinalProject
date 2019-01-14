@@ -167,52 +167,79 @@ void client_handshake() {
     exit(1);
   }
   close(fifo);
+
   char javapipeIN[10];
   char javapipeOUT[10];
   sprintf(javapipeIN, "%d", getpid() + 10);
   sprintf(javapipeOUT, "%d", getpid() + 20);
   mkfifo(javapipeIN, 0666);
   mkfifo(javapipeOUT, 0666);
-  int f = fork();
-  if(!f){
-    char* command[4];
-    command[0] = "java";
-    command[1] = "Tetris";
-    command[2] = javapipeIN;
-    command[3] = NULL;
-    printf("waiting for other player to join\n");
-    fifo = open(name, O_RDONLY);
-    char ready[10];
-    if(read(fifo, ready, 256) == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    printf("good\n");
-    execvp(command[0], command);
-  }else{
-    int status;
-    wait(&status);
+
+  //get username
+  printf("Enter username: ");
+  char user[100];
+  fgets(user, 100, stdin);
+  user[strlen(user)-1] = 0;
+  printf("\nWelcome, %s\n", user);
+
+  //get single player or pvp
+  printf("\nWould you like to play in single player mode or PvP mode?\n1 : Single Player\n2 : PvP\n");
+  char gameMode[10];
+  fgets(gameMode, 10, stdin);
+  gameMode[strlen(gameMode)-1] = 0;
+
+  //CODE BELOW MIGHT BE CAUSING AN ERROR
+
+  //if single player
+  if (strcmp(gameMode,"1")==0) {
+    //TetrisSingle
   }
-  f = fork();
-  if(f){
-    while(1){
-      fifo = open(javapipeIN, O_RDONLY);
-      char sig[10];
-      read(fifo, sig, 10);
-      close(fifo);
-      fifo = open(newname, O_WRONLY);
-      write(fifo, sig, strlen(sig));
-      close(fifo);
-    }
-  }else{
-    while(1){
+
+  //if PvP
+  if (strcmp(gameMode,"2")==0) {
+    int f = fork();
+    if(!f){
+      char* command[4];
+      command[0] = "java";
+      command[1] = "Tetris";
+      command[2] = javapipeIN;
+      command[3] = NULL;
+      printf("\nwaiting for other player to join\n");
       fifo = open(name, O_RDONLY);
-      char sig[10];
-      read(fifo, sig, 10);
-      close(fifo);
-      fifo = open(javapipeOUT, O_WRONLY);
-      write(fifo, sig, strlen(sig));
-      close(fifo);
+      char ready[10];
+      if(read(fifo, ready, 256) == -1){
+        printf("ERROR: %s\n", strerror(errno));
+        exit(1);
+      }
+      printf("good\n");
+      execvp(command[0], command);
+    }else{
+      int status;
+      wait(&status);
+    }
+    f = fork();
+    if(f){
+      while(1){
+        fifo = open(javapipeIN, O_RDONLY);
+        char sig[10];
+        read(fifo, sig, 10);
+        close(fifo);
+        fifo = open(newname, O_WRONLY);
+        write(fifo, sig, strlen(sig));
+        close(fifo);
+      }
+    }else{
+      while(1){
+        fifo = open(name, O_RDONLY);
+        char sig[10];
+        read(fifo, sig, 10);
+        close(fifo);
+        fifo = open(javapipeOUT, O_WRONLY);
+        write(fifo, sig, strlen(sig));
+        close(fifo);
+      }
     }
   }
+
+
 }

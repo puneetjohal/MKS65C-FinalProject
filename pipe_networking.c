@@ -20,29 +20,29 @@ void server_handshake() {
   while(clients < 2){
     unlink(ACK);
     if(mkfifo(ACK, 0666) == -1){
-      printf("ERROR: %s\n", strerror(errno));
+      printf("ERROR1: %s\n", strerror(errno));
       exit(1);
     }
     printf("Server created\n");
     fifo = open(ACK, O_RDONLY);
     if(read(fifo, name, 256) == -1){
-      printf("ERROR: %s\n", strerror(errno));
+      printf("ERROR2: %s\n", strerror(errno));
       exit(1);
     }
     close(fifo);
     fifo = open(name, O_WRONLY);
     if(fifo == -1){
-      printf("ERROR: %s\n", strerror(errno));
+      printf("ERROR3: %s\n", strerror(errno));
       exit(1);
     }
     if(write(fifo, "I gotchu", strlen("I gotchu")) == -1){
-      printf("ERROR: %s\n", strerror(errno));
+      printf("ERROR4: %s\n", strerror(errno));
       exit(1);
     }
     close(fifo);
     fifo = open(ACK, O_RDONLY);
     if(read(fifo, message, 256) == -1){
-      printf("ERROR: %s\n", strerror(errno));
+      printf("ERROR5: %s\n", strerror(errno));
       exit(1);
     }
     if(clients == 0){

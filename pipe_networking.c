@@ -187,6 +187,7 @@ void client_handshake() {
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
     }
+    printf("good\n");
     execvp(command[0], command);
   }else{
     int status;

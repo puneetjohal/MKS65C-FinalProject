@@ -471,6 +471,27 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	}
     }
 
+    public void restart(){
+	repaint();
+	revalidate();
+	coordTable = new int[20][10];
+	score.setText("Score:0");
+	curLevel.setText("Level:1");
+	newScore = 0;
+	timer.start();
+	xcor = 4;
+	ycor = 0;
+	orientation = 0;
+	displacement = 0;
+	level = 1;
+	linesToClear = 5;
+	clearedLines = 0;
+	moving = false;
+	next.setShape(null);
+	held.setShape(null);
+	curShape = null;
+    }
+    
     //Check if the player lost and if they did then end the game
     public boolean end(){
 	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){

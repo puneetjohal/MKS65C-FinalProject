@@ -75,16 +75,16 @@ void server_handshake() {
   int f = fork();
   if(!f){
     int fifo1 = open(name1, O_WRONLY);
-    int fifo2 = open(name2, O_WRONLY);
     if(write(fifo1, "ready", strlen("ready")) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
     }
+    close(fifo1);
+    int fifo2 = open(name2, O_WRONLY);
     if(write(fifo2, "ready", strlen("ready")) == -1){
       printf("ERROR: %s\n", strerror(errno));
       exit(1);
     }
-    close(fifo1);
     close(fifo2);
     f = fork();
     if(f){

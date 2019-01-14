@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 public class Tetris extends JFrame implements ActionListener{
   private Container pane;
-  private JLabel  score;
+  private JLabel score;
   private JLabel level;
   private JLabel heldPiece;
   private JLabel nextPiece;
@@ -46,22 +46,23 @@ public class Tetris extends JFrame implements ActionListener{
     nextPiece.setFont(new Font("Serif",Font.PLAIN,30));
     matrix=new Board(this, pid);
 
-    pane.setLayout(new GridLayout());
     pane.add(matrix);
     matrix.restart();
-    pane.add(sidebar);
-    matrix.setVisible(true);
-    matrix.requestFocus();
     sidebar.add(nextPiece);
     sidebar.add(predictor);
     sidebar.add(heldPiece);
     sidebar.add(held);
     sidebar.add(score);
     sidebar.add(level);
+    sidebar.setBackground(Color.LIGHT_GRAY);
+    pane.add(sidebar);
+    pane.setLayout(new GridLayout());
+    matrix.requestFocus();
+    matrix.setVisible(true);
+    matrix.requestFocus();
     predictor.setVisible(true);
     held.setVisible(true);
     sidebar.setVisible(true);
-    sidebar.setBackground(Color.LIGHT_GRAY);
 
   }
   //The gameover method makes the matrix and sidebar invisible and adds the gameover label, score label and the start button to the pane.

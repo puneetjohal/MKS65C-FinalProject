@@ -37,9 +37,11 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     private Tetrimino t;
 
     //Scanner for reading from named pipe, Filewriter for writing to pipe
+    private int pid;
+    private File f;
     private Scanner in;
     private FileWriter out;
-    
+
     //Creates the actual game
     public Board(Tetris parent, int pid) {
     	score = parent.getScore();
@@ -67,19 +69,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-	/*
-	try{
-	    File pipe1 = new File(String.valueOf(pid));
-	    out = new FileWriter(pipe1);
-
-	    File pipe2 = new File(String.valueOf(pid + 10));
-	    in = new Scanner(pipe2);
-
-	    System.out.println(12);
-	}catch(Exception e){
-	    System.exit(1);
-	}
-	*/
+      this.pid = pid;
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -90,14 +80,14 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	int ori = orientation;
 
 	//Checking if message is received from client
-	/*
-	String message;
+	f = new File(String.valueOf(pid + 10));
+  in = new Scanner(f);
 	if(in.hasNext()){
-	    message = in.nextLine();
+	    System.out.println(in.nextLine());
 	}
-	*/
+  in.close();
 
-	
+
 	if(!moving){
 	    if(curShape == null){
 		curShape = t.randGen();
@@ -396,6 +386,14 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    }
 	    moveDown(row);
 	}
+
+  //Networking, send number of lines completed
+  f = new File(String.valueOf(pid));
+  out = new FileWriter(f);
+  out.write(String.valueOf(lines));
+  out.flush();
+  out.close();
+
 	int multiplier = 0;
 	if(lines == 1){
 	    multiplier = 40;
@@ -472,6 +470,11 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     public boolean end(){
 	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){
 	    timer.stop();
+      f = new File(String.valueOf(pid));
+      out = new FileWriter(f);
+      out.write("0");
+      out.flush();
+      out.close();
 	    return true;
 	}
 	return false;

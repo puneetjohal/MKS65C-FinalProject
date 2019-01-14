@@ -13,6 +13,8 @@ void server_handshake() {
   char name[10];
   char name1[10];
   char name2[10];
+  char in1[10];
+  char in2[10];
   char message[256];
   char newname[10];
   while(clients < 2){
@@ -52,6 +54,11 @@ void server_handshake() {
     printf("Handshake Complete\n");
 
     sprintf(newname, "%d", getpid() + clients);
+    if(clients == 0){
+      sprintf(in1, "%d", getpid() + clients);
+    }else{
+      sprintf(in2, "%d", getpid() + clients);
+    }
     mkfifo(newname, 0666);
     fifo = open(name, O_WRONLY);
     if(fifo == -1){
@@ -65,17 +72,44 @@ void server_handshake() {
     close(fifo);
     clients++;
   }
-  int fifo1 = open(name1, O_WRONLY);
-  int fifo2 = open(name2, O_WRONLY);
-  if(write(fifo1, "ready", strlen("ready")) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  if(write(fifo2, "ready", strlen("ready")) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  while(1){
+  int f = fork();
+  if(!f){
+    int fifo1 = open(name1, O_WRONLY);
+    int fifo2 = open(name2, O_WRONLY);
+    if(write(fifo1, "ready", strlen("ready")) == -1){
+      printf("ERROR: %s\n", strerror(errno));
+      exit(1);
+    }
+    if(write(fifo2, "ready", strlen("ready")) == -1){
+      printf("ERROR: %s\n", strerror(errno));
+      exit(1);
+    }
+    close(fifo1);
+    close(fifo2);
+    f = fork();
+    if(f){
+      while(1){
+        fifo = open(in1, O_RDONLY);
+        char sig[10];
+        read(fifo, sig, 10);
+        close(fifo);
+        fifo = open(name2, O_WRONLY);
+        write(fifo, sig, strlen(sig));
+        close(fifo);
+      }
+    }else{
+      while(1){
+        fifo = open(in2, O_RDONLY);
+        char sig[10];
+        read(fifo, sig, 10);
+        close(fifo);
+        fifo = open(name1, O_WRONLY);
+        write(fifo, sig, strlen(sig));
+        close(fifo);
+      }
+    }
+  }else{
+    clients = 0;
   }
 }
 
@@ -154,8 +188,30 @@ void client_handshake() {
       exit(1);
     }
     execvp(command[0], command);
+  }else{
+    int status;
+    wait(&status);
   }
-
-  while(1){
+  f = fork();
+  if(f){
+    while(1){
+      fifo = open(javapipeIN, O_RDONLY);
+      char sig[10];
+      read(fifo, sig, 10);
+      close(fifo);
+      fifo = open(newname, O_WRONLY);
+      write(fifo, sig, strlen(sig));
+      close(fifo);
+    }
+  }else{
+    while(1){
+      fifo = open(name, O_RDONLY);
+      char sig[10];
+      read(fifo, sig, 10);
+      close(fifo);
+      fifo = open(javapipeOUT, O_WRONLY);
+      write(fifo, sig, strlen(sig));
+      close(fifo);
+    }
   }
 }

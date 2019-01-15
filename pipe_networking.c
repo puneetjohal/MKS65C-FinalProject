@@ -218,6 +218,9 @@ void client_handshake() {
       wait(&status);
     }
     f = fork();
+    fifo = open(javapipeOUT, O_WRONLY);
+    write(fifo, "hi", 3);
+    close(fifo);
     if(f){
       while(1){
         fifo = open(javapipeIN, O_RDONLY);

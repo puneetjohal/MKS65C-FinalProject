@@ -81,7 +81,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
 	//Checking if message is received from client
   try{
-  	f = new File(String.valueOf(pid + 10));
+  	f = new File(Integer.toString(pid + 10));
     in = new Scanner(f);
   	if(in.hasNext()){
   	    System.out.println(in.nextLine());
@@ -390,6 +390,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	}
 
   //Networking, send number of lines completed
+  /*
   try{
     f = new File(String.valueOf(pid));
     out = new FileWriter(f);
@@ -398,6 +399,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     out.close();
   }catch(Exception e){
   }
+  */
 
 	int multiplier = 0;
 	if(lines == 1){
@@ -496,6 +498,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     public boolean end(){
     	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){
     	    timer.stop();
+          /*
           try{
             f = new File(String.valueOf(pid));
             out = new FileWriter(f);
@@ -504,6 +507,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
             out.close();
           }catch(Exception e){
           }
+          */
     	    return true;
     	}
     	return false;

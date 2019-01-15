@@ -39,7 +39,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     //Scanner for reading from named pipe, Filewriter for writing to pipe
     private int pid;
     private File f;
-    private Scanner in;
+    //private Scanner in;
     private FileWriter out;
 
     //Creates the actual game
@@ -69,11 +69,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-      //this.pid = pid;
-      try{
-      	FileInputStream in = new FileInputStream("" + (pid + 10));
-      }catch(Exception e){
-      }
+      this.pid = pid;
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -83,6 +79,11 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
+      try{
+      	FileInputStream in = new FileInputStream("" + (pid + 10));
+        in.close();
+      }catch(Exception e){
+      }
     	//Checking if message is received from client
       /*
       try{

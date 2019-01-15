@@ -84,6 +84,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
+      System.out.println(network.hasNext());
 
     	//Checking if message is received from client
       /*

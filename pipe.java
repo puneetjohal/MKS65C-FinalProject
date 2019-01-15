@@ -8,8 +8,11 @@ public class pipe{
   public pipe(int pid_in, int pid_out){
     f1 = new File("" + pid_in);
     f2 = new File("" + pid_out);
-    in = new BufferedReader(new FileReader(f1));
-    out = new OutputStreamWriter(new FileOutputStream(f2));
+    try{
+      in = new BufferedReader(new FileReader(f1));
+      out = new OutputStreamWriter(new FileOutputStream(f2));
+    }catch(Exception e){
+    }
   }
   public boolean hasNext(){
     boolean next = false;

@@ -1,10 +1,13 @@
-all: client server
+all: client server Tetris.class
 
 client: client.o pipe_networking.o
 	gcc -o client client.o pipe_networking.o
 
 server: basic_server.o pipe_networking.o
 	gcc -o server basic_server.o pipe_networking.o
+
+Tetris.class: Tetris.java
+	javac Tetris.java
 
 client.o: client.c pipe_networking.h
 	gcc -c client.c

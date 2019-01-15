@@ -217,26 +217,24 @@ void client_handshake() {
       int status;
       wait(&status);
     }
-    int fifo2;
     f = fork();
-    fifo = open(javapipeOUT, O_WRONLY);
     if(f){
       while(1){
-        fifo2 = open(javapipeIN, O_RDONLY);
+        fifo = open(javapipeIN, O_RDONLY);
         char sig[10];
         read(fifo, sig, 10);
         close(fifo);
-        fifo2 = open(newname, O_WRONLY);
+        fifo = open(newname, O_WRONLY);
         write(fifo, sig, strlen(sig));
         close(fifo);
       }
     }else{
       while(1){
-        fifo2 = open(name, O_RDONLY);
+        fifo = open(name, O_RDONLY);
         char sig[10];
         read(fifo, sig, 10);
         close(fifo);
-        fifo2 = open(javapipeOUT, O_WRONLY);
+        fifo = open(javapipeOUT, O_WRONLY);
         write(fifo, sig, strlen(sig));
         close(fifo);
       }

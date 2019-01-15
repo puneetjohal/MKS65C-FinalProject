@@ -75,7 +75,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
       System.out.println("start");
       network = new pipe(pid + 10, pid);
-      System.out.println(network.nextLine());
+      network.writeOut("hi");
       //this.pid = pid;
     }
 

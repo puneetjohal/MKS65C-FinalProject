@@ -24,6 +24,6 @@ public class pipe{
     return input;
   }
   public void writeOut(String output){
-
+    Files.write(path2, output.getBytes("UTF-8"));
   }
 }

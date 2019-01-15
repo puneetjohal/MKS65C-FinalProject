@@ -39,7 +39,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     //Scanner for reading from named pipe, Filewriter for writing to pipe
     private int pid;
     private File f;
-    //private Scanner in;
+    private Scanner in;
     private FileWriter out;
 
     //Creates the actual game
@@ -80,8 +80,11 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int ori = orientation;
 
       try{
-      	FileInputStream in = new FileInputStream("" + (pid + 10));
-        in.close();
+        f = new File(String.valueOf(pid));
+        out = new FileWriter(f);
+        out.write("0");
+        out.flush();
+        out.close();
       }catch(Exception e){
       }
     	//Checking if message is received from client

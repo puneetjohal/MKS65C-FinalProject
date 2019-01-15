@@ -268,7 +268,7 @@ void client_handshake() {
     if (strcmp(gameMode,"4")==0) {
       playing = 0;
       printf("Goodbye, %s\n", user);
-      exit();
+      exit(1);
     }
 
   }

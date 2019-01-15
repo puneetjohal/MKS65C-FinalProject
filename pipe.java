@@ -11,10 +11,6 @@ public class pipe{
     System.out.println(path1);
     System.out.println(path2);
   }
-  public boolean hasNext(){
-    boolean next = false;
-    return next;
-  }
   public String nextLine(){
     String input = null;
     try{

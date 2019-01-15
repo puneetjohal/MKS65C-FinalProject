@@ -14,7 +14,11 @@ public class pipe{
     return next;
   }
   public String nextLine(){
-    String input = new String(Files.readAllBytes(path1));
+    String input = null;
+    try{
+      input = new String(Files.readAllBytes(path1));
+    }catch(Exception e){
+    }
     return input;
   }
   public void writeOut(String output){

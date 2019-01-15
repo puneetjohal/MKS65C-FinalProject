@@ -73,9 +73,6 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-      System.out.println("start");
-      network = new pipe(pid + 10, pid);
-      network.writeOut("hi");
       //this.pid = pid;
     }
 

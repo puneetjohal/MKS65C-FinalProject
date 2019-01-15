@@ -185,7 +185,7 @@ void client_handshake() {
   //game lobby
   int playing = 1;
   while (playing) {
-    printf("\nPick a game mode:\n1 : Single Player\n2 : PvP\n3 : Tournament\n4 : Exit\n");
+    printf("\nPick a game mode:\n1 : Single Player\n2 : PvP\n\n3 : Exit\n");
     char gameMode[10];
     fgets(gameMode, 10, stdin);
     gameMode[strlen(gameMode)-1] = 0;
@@ -194,7 +194,6 @@ void client_handshake() {
 
     //single player
     if (strcmp(gameMode,"1")==0) {
-      //TetrisSingle
       int f = fork();
       if(!f){
         chdir("/single");
@@ -257,19 +256,20 @@ void client_handshake() {
       }
     }
 
-    //tournament
+    /*tournament
     if (strcmp(gameMode,"3")==0) {
       //tells server to enlist person in a tournament
       //server makes matches and pairs with an opponent
       //run PvP
       //wait for next opponent or display message saying your were dorpped from the tournament
     }
+    */
 
     //exiting
-    if (strcmp(gameMode,"4")==0) {
+    if (strcmp(gameMode,"3")==0) {
       playing = 0;
       printf("Goodbye, %s\n", user);
-      exit(1);
+      exit(0);
     }
 
   }

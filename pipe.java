@@ -10,7 +10,7 @@ public class pipe{
     f2 = new File("" + pid_out);
   }
   public boolean hasNext(){
-    boolean next = null;
+    boolean next = false;
     try{
       in = new Scanner(f1);
       next = in.hasNext();

@@ -172,8 +172,8 @@ void client_handshake() {
   char javapipeOUT[10];
   sprintf(javapipeIN, "%d", getpid() + 10);
   sprintf(javapipeOUT, "%d", getpid() + 20);
-  mkfifo(javapipeIN, 0666);
-  mkfifo(javapipeOUT, 0666);
+  mkfifo(javapipeIN, 0777);
+  mkfifo(javapipeOUT, 0777);
 
   //get username
   printf("Enter username: ");

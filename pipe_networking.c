@@ -245,7 +245,7 @@ void client_handshake() {
         }
       }else{
         while(1){
-          fifo = open(name, O_RDONLY);
+          fifo = open(name, O_RDONLY | O_NONBLOCK);
           char sig[10];
           read(fifo, sig, 10);
           close(fifo);

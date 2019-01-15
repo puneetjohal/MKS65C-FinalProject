@@ -37,10 +37,12 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     private Tetrimino t;
 
     //Scanner for reading from named pipe, Filewriter for writing to pipe
+    /*
     private int pid;
     private File f;
     private Scanner in;
     private FileWriter out;
+*/
 
     //Creates the actual game
     public Board(Tetris parent, int pid) {
@@ -69,7 +71,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-      this.pid = pid;
+      //this.pid = pid;
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -79,7 +81,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
-      
+
     	//Checking if message is received from client
       /*
       try{

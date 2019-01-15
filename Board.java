@@ -36,6 +36,8 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     //Used to call the functions needed to get the shapes and their dimensions
     private Tetrimino t;
 
+    private pipe network;
+
     //Scanner for reading from named pipe, Filewriter for writing to pipe
     /*
     private int pid;
@@ -71,6 +73,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
+      network = new pipe(pid + 10, pid);
       //this.pid = pid;
     }
 

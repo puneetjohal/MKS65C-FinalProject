@@ -22,7 +22,7 @@ public class pipe{
   public String nextLine(){
     String input = null;
     try{
-      next = in.readLine();
+      input = in.readLine();
     }catch(Exception e){
     }
     return input;

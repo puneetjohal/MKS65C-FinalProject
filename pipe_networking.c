@@ -231,8 +231,6 @@ void client_handshake() {
         printf("starting game...\n");
         execvp(command[0], command);
       }else{
-        int status;
-        wait(&status);
       }
       f = fork();
       if(f){

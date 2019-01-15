@@ -74,6 +74,8 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusTraversalKeysEnabled(false);
 
       //this.pid = pid;
+      network = new pipe(pid + 10, pid);
+      network.writeOut("hi");
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -82,6 +84,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int row = xcor*40;
     	int col = ycor*40+displacement;
     	int ori = orientation;
+
 
     	//Checking if message is received from client
       /*

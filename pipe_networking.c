@@ -184,63 +184,96 @@ void client_handshake() {
   user[strlen(user)-1] = 0;
   printf("\nWelcome, %s\n", user);
 
-  //get single player or pvp
-  printf("\nWould you like to play in single player mode or PvP mode?\n1 : Single Player\n2 : PvP\n");
-  char gameMode[10];
-  fgets(gameMode, 10, stdin);
-  gameMode[strlen(gameMode)-1] = 0;
+  //game lobby
+  int playing = 1;
+  while (playing) {
+    printf("\nPick a game mode:\n1 : Single Player\n2 : PvP\n3 : Exit\n");
+    char gameMode[10];
+    fgets(gameMode, 10, stdin);
+    gameMode[strlen(gameMode)-1] = 0;
 
-  //CODE BELOW MIGHT BE CAUSING AN ERROR
+    //CODE BELOW MIGHT BE CAUSING AN ERROR
 
-  //if single player
-  if (strcmp(gameMode,"1")==0) {
-    //TetrisSingle
-  }
-
-  //if PvP
-  if (strcmp(gameMode,"2")==0) {
-    int f = fork();
-    if(!f){
-      char* command[4];
-      command[0] = "java";
-      command[1] = "Tetris";
-      command[2] = javapipeIN;
-      command[3] = NULL;
-      printf("\nwaiting for other player to join\n");
-      fifo = open(name, O_RDONLY);
-      char ready[10];
-      if(read(fifo, ready, 256) == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
+    //single player
+    if (strcmp(gameMode,"1")==0) {
+      int f = fork();
+      if(!f){
+        chdir("/single");
+        char* command[4];
+        command[0] = "java";
+        command[1] = "Tetris";
+        command[2] = javapipeIN;
+        command[3] = NULL;
+        printf("starting game...\n");
+        execvp(command[0], command);
+      }else{
+        int status;
+        wait(&status);
       }
-      execvp(command[0], command);
-    }else{
-      int status;
-      wait(&status);
     }
-    f = fork();
-    if(f){
-      while(1){
-        fifo = open(javapipeIN, O_RDONLY);
-        char sig[10];
-        read(fifo, sig, 10);
-        close(fifo);
-        fifo = open(newname, O_WRONLY);
-        write(fifo, sig, strlen(sig));
-        close(fifo);
-      }
-    }else{
-      while(1){
+
+    //PvP
+    if (strcmp(gameMode,"2")==0) {
+      int f = fork();
+      if(!f){
+        char* command[4];
+        command[0] = "java";
+        command[1] = "Tetris";
+        command[2] = javapipeIN;
+        command[3] = NULL;
+        printf("\nwaiting for other player to join\n");
         fifo = open(name, O_RDONLY);
-        char sig[10];
-        read(fifo, sig, 10);
-        close(fifo);
-        fifo = open(javapipeOUT, O_WRONLY);
-        write(fifo, sig, strlen(sig));
-        close(fifo);
+        char ready[10];
+        if(read(fifo, ready, 256) == -1){
+          printf("ERROR: %s\n", strerror(errno));
+          exit(1);
+        }
+        printf("starting game...\n");
+        execvp(command[0], command);
+      }else{
+        int status;
+        wait(&status);
+      }
+      f = fork();
+      if(f){
+        while(1){
+          fifo = open(javapipeIN, O_RDONLY);
+          char sig[10];
+          read(fifo, sig, 10);
+          close(fifo);
+          fifo = open(newname, O_WRONLY);
+          write(fifo, sig, strlen(sig));
+          close(fifo);
+        }
+      }else{
+        while(1){
+          fifo = open(name, O_RDONLY);
+          char sig[10];
+          read(fifo, sig, 10);
+          close(fifo);
+          fifo = open(javapipeOUT, O_WRONLY);
+          write(fifo, sig, strlen(sig));
+          close(fifo);
+        }
       }
     }
-  }
 
+    /*tournament
+    if (strcmp(gameMode,"3")==0) {
+      //tells server to enlist person in a tournament
+      //server makes matches and pairs with an opponent
+      //run PvP
+      //wait for next opponent or display message saying your were dorpped from the tournament
+    }
+    */
+
+    //exiting
+    if (strcmp(gameMode,"3")==0) {
+      playing = 0;
+      printf("Goodbye, %s\n", user);
+      exit(0);
+    }
+
+  }
 
 }

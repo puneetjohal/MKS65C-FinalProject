@@ -84,6 +84,12 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     System.out.println(f);
   }catch(Exception e){
   }
+  try{
+    in = new Scanner(f);
+    System.out.println("good");
+  }catch(IOException e){
+    System.out.println(e);
+  }
 	//Checking if message is received from client
   /*
   try{

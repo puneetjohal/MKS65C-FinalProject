@@ -39,7 +39,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     //Scanner for reading from named pipe, Filewriter for writing to pipe
     private int pid;
     private File f;
-    private BufferedReader in;
+    private Scanner in;
     private FileWriter out;
 
     //Creates the actual game

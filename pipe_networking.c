@@ -17,99 +17,101 @@ void server_handshake() {
   char in2[10];
   char message[256];
   char newname[10];
-  while(clients < 2){
-    unlink(ACK);
-    if(mkfifo(ACK, 0666) == -1){
-      printf("ERROR1: %s\n", strerror(errno));
-      exit(1);
-    }
-    printf("Server created\n");
-    fifo = open(ACK, O_RDONLY);
-    if(read(fifo, name, 256) == -1){
-      printf("ERROR2: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo);
-    fifo = open(name, O_WRONLY);
-    if(fifo == -1){
-      printf("ERROR3: %s\n", strerror(errno));
-      exit(1);
-    }
-    if(write(fifo, "I gotchu", strlen("I gotchu")) == -1){
-      printf("ERROR4: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo);
-    fifo = open(ACK, O_RDONLY);
-    if(read(fifo, message, 256) == -1){
-      printf("ERROR5: %s\n", strerror(errno));
-      exit(1);
-    }
-    if(clients == 0){
-      strcpy(name1,name);
-    }else{
-      strcpy(name2,name);
-    }
-    close(fifo);
-    printf("Handshake Complete\n");
+  while(1){
+    while(clients < 2){
+      unlink(ACK);
+      if(mkfifo(ACK, 0666) == -1){
+        printf("ERROR1: %s\n", strerror(errno));
+        exit(1);
+      }
+      printf("Server created\n");
+      fifo = open(ACK, O_RDONLY);
+      if(read(fifo, name, 256) == -1){
+        printf("ERROR2: %s\n", strerror(errno));
+        exit(1);
+      }
+      close(fifo);
+      fifo = open(name, O_WRONLY);
+      if(fifo == -1){
+        printf("ERROR3: %s\n", strerror(errno));
+        exit(1);
+      }
+      if(write(fifo, "I gotchu", strlen("I gotchu")) == -1){
+        printf("ERROR4: %s\n", strerror(errno));
+        exit(1);
+      }
+      close(fifo);
+      fifo = open(ACK, O_RDONLY);
+      if(read(fifo, message, 256) == -1){
+        printf("ERROR5: %s\n", strerror(errno));
+        exit(1);
+      }
+      if(clients == 0){
+        strcpy(name1,name);
+      }else{
+        strcpy(name2,name);
+      }
+      close(fifo);
+      printf("Handshake Complete\n");
 
-    sprintf(newname, "%d", getpid() + clients);
-    if(clients == 0){
-      sprintf(in1, "%d", getpid() + clients);
-    }else{
-      sprintf(in2, "%d", getpid() + clients);
+      sprintf(newname, "%d", getpid() + clients);
+      if(clients == 0){
+        sprintf(in1, "%d", getpid() + clients);
+      }else{
+        sprintf(in2, "%d", getpid() + clients);
+      }
+      mkfifo(newname, 0666);
+      fifo = open(name, O_WRONLY);
+      if(fifo == -1){
+        printf("ERROR: %s\n", strerror(errno));
+        exit(1);
+      }
+      if(write(fifo, newname, strlen(newname)) == -1){
+        printf("ERROR: %s\n", strerror(errno));
+        exit(1);
+      }
+      close(fifo);
+      clients++;
     }
-    mkfifo(newname, 0666);
-    fifo = open(name, O_WRONLY);
-    if(fifo == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    if(write(fifo, newname, strlen(newname)) == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo);
-    clients++;
-  }
-  int f = fork();
-  if(!f){
-    int fifo1 = open(name1, O_WRONLY);
-    if(write(fifo1, "ready", strlen("ready")) == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo1);
-    int fifo2 = open(name2, O_WRONLY);
-    if(write(fifo2, "ready", strlen("ready")) == -1){
-      printf("ERROR: %s\n", strerror(errno));
-      exit(1);
-    }
-    close(fifo2);
-    f = fork();
-    if(f){
-      while(1){
-        fifo = open(in1, O_RDONLY);
-        char sig[10];
-        read(fifo, sig, 10);
-        close(fifo);
-        fifo = open(name2, O_WRONLY);
-        write(fifo, sig, strlen(sig));
-        close(fifo);
+    int f = fork();
+    if(!f){
+      int fifo1 = open(name1, O_WRONLY);
+      if(write(fifo1, "ready", strlen("ready")) == -1){
+        printf("ERROR: %s\n", strerror(errno));
+        exit(1);
+      }
+      close(fifo1);
+      int fifo2 = open(name2, O_WRONLY);
+      if(write(fifo2, "ready", strlen("ready")) == -1){
+        printf("ERROR: %s\n", strerror(errno));
+        exit(1);
+      }
+      close(fifo2);
+      f = fork();
+      if(f){
+        while(1){
+          fifo = open(in1, O_RDONLY);
+          char sig[10];
+          read(fifo, sig, 10);
+          close(fifo);
+          fifo = open(name2, O_WRONLY);
+          write(fifo, sig, strlen(sig));
+          close(fifo);
+        }
+      }else{
+        while(1){
+          fifo = open(in2, O_RDONLY);
+          char sig[10];
+          read(fifo, sig, 10);
+          close(fifo);
+          fifo = open(name1, O_WRONLY);
+          write(fifo, sig, strlen(sig));
+          close(fifo);
+        }
       }
     }else{
-      while(1){
-        fifo = open(in2, O_RDONLY);
-        char sig[10];
-        read(fifo, sig, 10);
-        close(fifo);
-        fifo = open(name1, O_WRONLY);
-        write(fifo, sig, strlen(sig));
-        close(fifo);
-      }
+      clients = 0;
     }
-  }else{
-    clients = 0;
   }
 }
 

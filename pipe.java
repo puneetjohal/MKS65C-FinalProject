@@ -8,6 +8,8 @@ public class pipe{
   public pipe(int pid_in, int pid_out){
     path1 = Paths.get("" + pid_in);
     path2 = Paths.get("" + pid_out);
+    System.out.println(path1);
+    System.out.println(path2);
   }
   public boolean hasNext(){
     boolean next = false;

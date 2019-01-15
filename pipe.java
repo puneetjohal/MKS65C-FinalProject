@@ -1,10 +1,8 @@
 import java.util.*;
-import java.nio.Files;
-import java.nio.Paths;
-import java.nio.Path;
+import java.nio.*;
 
 public class pipe{
-  private Past path1, path2;
+  private Path path1, path2;
   public pipe(int pid_in, int pid_out){
     path1 = Paths.get("" + pid_in);
     path2 = Paths.get("" + pid_out);

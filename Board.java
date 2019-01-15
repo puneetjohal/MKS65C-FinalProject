@@ -69,7 +69,22 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-      this.pid = pid;
+      //this.pid = pid;
+      try{
+      	FileInputStream in = new FileInputStream("" + (pid + 10));
+      }catch(Exception e){
+      }
+    }
+
+    //Creates all the shapes currently on the board and the shape being moved
+    public void paint(Graphics g){
+    	super.paintComponent(g);
+    	int row = xcor*40;
+    	int col = ycor*40+displacement;
+    	int ori = orientation;
+
+    	//Checking if message is received from client
+      /*
       try{
       	f = new File(Integer.toString(pid + 10));
         in = new Scanner(f);
@@ -79,85 +94,65 @@ public class Board extends JPanel implements ActionListener, KeyListener{
         in.close();
       }catch(Exception e){
       }
-    }
+      */
 
-    //Creates all the shapes currently on the board and the shape being moved
-    public void paint(Graphics g){
-	super.paintComponent(g);
-	int row = xcor*40;
-	int col = ycor*40+displacement;
-	int ori = orientation;
+    	if(!moving){
+        if(curShape == null){
+          curShape = t.randGen();
+        	next.setShape(t.randGen());
+    	  }
+  	    curShape = next.getShape();
+  	    next.setShape(t.randGen());
+  	    moving = true;
+      }
 
-	//Checking if message is received from client
-  /*
-  try{
-  	f = new File(Integer.toString(pid + 10));
-    in = new Scanner(f);
-  	if(in.hasNext()){
-  	    System.out.println(in.nextLine());
-  	}
-    in.close();
-  }catch(Exception e){
-  }
-  */
+    	//Creates the shape that is moving
+    	for(int i=0; i<t.getLen(curShape, ori); i++){
+    	    for(int j=0; j<t.getWid(curShape, ori); j++){
+      		if(t.getSquare(curShape,ori,i,j) == 1){
+      		    g.setColor(t.getCol(curShape));
+      		    g.fillRect(row,col,40,40);
+      		    g.setColor(Color.BLACK);
+      		    g.drawRect(row,col,40,40);
+      		}
+          row += 40;
+        }
+    	  col += 40;
+    	  row = xcor*40;
+    	}
 
-	if(!moving){
-	    if(curShape == null){
-		curShape = t.randGen();
-		next.setShape(t.randGen());
-	    }
-	    curShape = next.getShape();
-	    next.setShape(t.randGen());
-	    moving = true;
-	}
+    	//Creates the shapes that are not moving and still on the board based on the numbers on the coordTable which correspond to its original shape
+    	for(int y=0; y<20; y++){
+    	    for(int x=0; x<10; x++){
+    		      if(coordTable[y][x] > 0){
+    		          g.setColor(t.getCol(coordTable[y][x]));
+          		    g.fillRect(x*40,y*40,40,40);
+          		    g.setColor(Color.BLACK);
+          		    g.drawRect(x*40,y*40,40,40);
+          		    g.drawRect((row*40)+1,(col*40)+1,40,40);
+          		}
+    	    }
+    	}
+    	int y = ycor;
+    	int x = xcor;
+    	while(tryMoveDown(y)){
+    	    y++;
+    	}
+    	for(int i=0; i<t.getLen(curShape, orientation); i++){
+    	    for(int j=0; j<t.getWid(curShape, orientation); j++){
+            if(t.getSquare(curShape,ori,i,j) == 1){
+    		          g.drawRect(x*40,(y-1)*40,40,40);
+                }
+    		x++;
+    	    }
+    	    x=xcor;
+    	    y++;
+    	}
 
-	//Creates the shape that is moving
-	for(int i=0; i<t.getLen(curShape, ori); i++){
-	    for(int j=0; j<t.getWid(curShape, ori); j++){
-		if(t.getSquare(curShape,ori,i,j) == 1){
-		    g.setColor(t.getCol(curShape));
-		    g.fillRect(row,col,40,40);
-		    g.setColor(Color.BLACK);
-		    g.drawRect(row,col,40,40);
-		}
-		row += 40;
-	    }
-	    col += 40;
-	    row = xcor*40;
-	}
-
-	//Creates the shapes that are not moving and still on the board based on the numbers on the coordTable which correspond to its original shape
-	for(int y=0; y<20; y++){
-	    for(int x=0; x<10; x++){
-		if(coordTable[y][x] > 0){
-		    g.setColor(t.getCol(coordTable[y][x]));
-		    g.fillRect(x*40,y*40,40,40);
-		    g.setColor(Color.BLACK);
-		    g.drawRect(x*40,y*40,40,40);
-		    g.drawRect((row*40)+1,(col*40)+1,40,40);
-		}
-	    }
-	}
-	int y = ycor;
-	int x = xcor;
-	while(tryMoveDown(y)){
-	    y++;
-	}
-	for(int i=0; i<t.getLen(curShape, orientation); i++){
-	    for(int j=0; j<t.getWid(curShape, orientation); j++){
-		if(t.getSquare(curShape,ori,i,j) == 1){
-		    g.drawRect(x*40,(y-1)*40,40,40);
-		}
-		x++;
-	    }
-	    x=xcor;
-	    y++;
-	}
-
-	//If the shape isn't speeding up, it moves normally
-	if(displacement == 0){
-	    ycor++;
-	}
+    	//If the shape isn't speeding up, it moves normally
+    	if(displacement == 0){
+    	    ycor++;
+    	}
     }
     public void actionPerformed(ActionEvent e){
 

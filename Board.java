@@ -84,20 +84,9 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
-      System.out.println(network.nextLine());
-
-    	//Checking if message is received from client
-      /*
-      try{
-      	f = new File(Integer.toString(pid + 10));
-        in = new Scanner(f);
-      	if(in.hasNext()){
-      	    System.out.println(in.nextLine());
-      	}
-        in.close();
-      }catch(Exception e){
+      if(network.hasNext()){
+        System.out.println(network.nextLine());
       }
-      */
 
     	if(!moving){
         if(curShape == null){
@@ -398,17 +387,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    moveDown(row);
 	}
 
-  //Networking, send number of lines completed
-  /*
-  try{
-    f = new File(String.valueOf(pid));
-    out = new FileWriter(f);
-    out.write(String.valueOf(lines));
-    out.flush();
-    out.close();
-  }catch(Exception e){
-  }
-  */
+  network.writeOut("" + lines);
 
 	int multiplier = 0;
 	if(lines == 1){
@@ -507,16 +486,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     public boolean end(){
     	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){
     	    timer.stop();
-          /*
-          try{
-            f = new File(String.valueOf(pid));
-            out = new FileWriter(f);
-            out.write("0");
-            out.flush();
-            out.close();
-          }catch(Exception e){
-          }
-          */
+          network.writeOut("" + 0);
     	    return true;
     	}
     	return false;

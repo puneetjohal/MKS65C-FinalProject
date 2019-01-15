@@ -70,6 +70,15 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusTraversalKeysEnabled(false);
 
       this.pid = pid;
+      try{
+      	f = new File(Integer.toString(pid + 10));
+        in = new Scanner(f);
+      	if(in.hasNext()){
+      	    System.out.println(in.nextLine());
+      	}
+        in.close();
+      }catch(Exception e){
+      }
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -79,15 +88,6 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	int col = ycor*40+displacement;
 	int ori = orientation;
 
-  try{
-  	in =new BufferedReader(new FileReader("" + (pid + 10)));
-    if(in.ready()){
-      System.out.println(in.readLine());
-    }
-    in.close();
-  }catch(IOException e){
-    System.out.println("oh no");
-  }
 	//Checking if message is received from client
   /*
   try{

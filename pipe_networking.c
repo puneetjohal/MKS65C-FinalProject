@@ -185,7 +185,7 @@ void client_handshake() {
   //game lobby
   int playing = 1;
   while (playing) {
-    printf("\nPick a game mode:\n1 : Single Player\n2 : PvP\n\n3 : Exit\n");
+    printf("\nPick a game mode:\n1 : Single Player\n2 : PvP\n3 : Exit\n");
     char gameMode[10];
     fgets(gameMode, 10, stdin);
     gameMode[strlen(gameMode)-1] = 0;

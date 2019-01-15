@@ -84,7 +84,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     if(in.ready()){
       System.out.println(in.readLine());
     }
-    in.close()
+    in.close();
   }catch(IOException e){
     System.out.println("oh no");
   }

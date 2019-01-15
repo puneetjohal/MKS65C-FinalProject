@@ -12,7 +12,7 @@ public class pipe{
     path2 = Paths.get("" + pid_out);
     System.out.println(path1);
     System.out.println(path2);
-    f = new File(pid_out);
+    f = new File("" + pid_out);
   }
   public boolean hasNext(){
     boolean next = false;

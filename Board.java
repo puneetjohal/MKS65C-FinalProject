@@ -80,6 +80,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	int ori = orientation;
 
 	//Checking if message is received from client
+  /*
   try{
   	f = new File(Integer.toString(pid + 10));
     in = new Scanner(f);
@@ -89,6 +90,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     in.close();
   }catch(Exception e){
   }
+  */
 
 	if(!moving){
 	    if(curShape == null){

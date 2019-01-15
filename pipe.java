@@ -1,38 +1,31 @@
 import java.util.*;
-import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class pipe{
-  private File f1, f2;
+  private Path path1, path2;
   public pipe(int pid_in, int pid_out){
-    f1 = new File("" + pid_in);
-    f2 = new File("" + pid_out);
+    path1 = Paths.get("" + pid_in);
+    path2 = Paths.get("" + pid_out);
+    System.out.println(path1);
+    System.out.println(path2);
   }
   public boolean hasNext(){
-    try{
-      Scanner in = new Scanner(f1);
-      boolean next = in.hasNext();
-      in.close();
-      return next;
-    }catch(Exception e){
-    }
-    return false;
+    boolean next = false;
+    return next;
   }
   public String nextLine(){
+    String input = null;
     try{
-      Scanner in = new Scanner(f1);
-      String input = in.nextLine();
-      in.close();
-      return input;
+      input = new String(Files.readAllBytes(path1));
     }catch(Exception e){
     }
-    return "";
+    return input;
   }
   public void writeOut(String output){
     try{
-      FileWriter out = new FileWriter(f2);
-      out.write(output);
-      out.flush();
-      out.close();
+      Files.write(path2, output.getBytes("UTF-8"));
     }catch(Exception e){
     }
   }

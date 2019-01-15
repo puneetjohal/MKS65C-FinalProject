@@ -246,11 +246,12 @@ void client_handshake() {
       }else{
         while(1){
           fifo = open(name, O_RDONLY);
-          int fifo2 = open(javapipeOUT, O_WRONLY);
           char sig[10];
           read(fifo, sig, 10);
           close(fifo);
-          write(fifo2, sig, strlen(sig));
+          fifo = open(javapipeOUT, O_WRONLY);
+          write(fifo, sig, strlen(sig));
+          close(fifo);
         }
       }
     }

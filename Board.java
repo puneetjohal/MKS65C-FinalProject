@@ -84,9 +84,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
-      if(network.hasNext()){
-        System.out.println(network.nextLine());
-      }
+      System.out.println(network.nextLine());
 
     	if(!moving){
         if(curShape == null){

@@ -197,9 +197,10 @@ void client_handshake() {
       //TetrisSingle
       int f = fork();
       if(!f){
+        chdir("/single");
         char* command[4];
         command[0] = "java";
-        command[1] = "TetrisSingle";
+        command[1] = "Tetris";
         command[2] = javapipeIN;
         command[3] = NULL;
         printf("starting game...\n");

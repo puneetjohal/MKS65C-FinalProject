@@ -10,7 +10,7 @@ public class pipe{
     f2 = new File("" + pid_out);
   }
   public boolean hasNext(){
-    boolean next;
+    boolean next = null;
     try{
       in = new Scanner(f1);
       next = in.hasNext();
@@ -20,7 +20,7 @@ public class pipe{
     return next;
   }
   public String nextLine(){
-    String input;
+    String input = null;
     try{
       in = new Scanner(f1);
       input = in.nextLine();
@@ -30,9 +30,12 @@ public class pipe{
     return input;
   }
   public void writeOut(String output){
-    out = new FileWriter(f2);
-    out.write(output);
-    out.flush();
-    out.close();
+    try{
+      out = new FileWriter(f2);
+      out.write(output);
+      out.flush();
+      out.close();
+    }catch(Exception e){
+    }
   }
 }

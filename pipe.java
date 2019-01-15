@@ -10,8 +10,9 @@ public class pipe{
   public boolean hasNext(){
     try{
       Scanner in = new Scanner(f1);
-      return in.hasNext();
+      boolean next = in.hasNext();
       in.close();
+      return next;
     }catch(Exception e){
     }
     return false;
@@ -19,8 +20,9 @@ public class pipe{
   public String nextLine(){
     try{
       Scanner in = new Scanner(f1);
-      return in.nextLine();
+      String input = in.nextLine();
       in.close();
+      return input;
     }catch(Exception e){
     }
     return "";

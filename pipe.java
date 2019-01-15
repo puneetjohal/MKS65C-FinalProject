@@ -6,7 +6,7 @@ public class pipe{
   private BufferedReader in;
   private File f1, f2;
   public pipe(int pid_in, int pid_out){
-    f1 = new File("" + pid_in);
+    f1 = new File("HOLA");
     f2 = new File("" + pid_out);
     try{
       in = new BufferedReader(new FileReader(f1));

@@ -73,7 +73,9 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
+      System.out.println("start");
       network = new pipe(pid + 10, pid);
+      System.out.println(network.nextLine());
       //this.pid = pid;
     }
 
@@ -83,8 +85,6 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int row = xcor*40;
     	int col = ycor*40+displacement;
     	int ori = orientation;
-
-      System.out.println(network.hasNext());
 
     	//Checking if message is received from client
       /*

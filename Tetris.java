@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.io.*;
 public class Tetris extends JFrame implements ActionListener{
   private Container pane;
   private JLabel score;
@@ -107,6 +108,14 @@ public class Tetris extends JFrame implements ActionListener{
   }
 
   public static void main(String[] args){
+    try{
+      File f = new File(args[0]);
+      FileWriter out = new FileWriter(f);
+      out.write("0");
+      out.flush();
+      out.close();
+    }catch(Exception e){
+    }
     Tetris t=new Tetris(Integer.parseInt(args[0]));
     t.setVisible(true);
   }

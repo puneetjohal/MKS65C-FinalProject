@@ -79,14 +79,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
-      try{
-        f = new File(String.valueOf(pid));
-        out = new FileWriter(f);
-        out.write("0");
-        out.flush();
-        out.close();
-      }catch(Exception e){
-      }
+      
     	//Checking if message is received from client
       /*
       try{

@@ -23,17 +23,18 @@ int main() {
 void subserver(int client_socket_1, int client_socket_2) {
   char buffer[BUFFER_SIZE];
 
+
   write(client_socket_1, "ready", sizeof("ready"));
   write(client_socket_2, "ready", sizeof("ready"));
 
   int f = fork();
   if(f){
     read(client_socket_1, buffer, sizeof(buffer));
-    printf("subserver received: %s\n", buffer);
+    printf("subserver received: %s from c1\n", buffer);
     write(client_socket_2, buffer, sizeof(buffer));
   }else{
     read(client_socket_2, buffer, sizeof(buffer));
-    printf("subserver received: %s\n", buffer);
+    printf("subserver received: %s from c2\n", buffer);
     write(client_socket_1, buffer, sizeof(buffer));
   }
 }

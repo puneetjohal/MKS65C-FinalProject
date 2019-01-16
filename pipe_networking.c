@@ -1,277 +1,106 @@
 #include "pipe_networking.h"
 
-/*=========================
-  server_handshake
-  args: int * to_client
-  Performs the client side pipe 3 way handshake.
-  Sets *to_client to the file descriptor to the downstream pipe.
-  returns the file descriptor for the upstream pipe.
-  =========================*/
-void server_handshake() {
-  int clients = 0;
-  int fifo;
-  char name[256];
-  char name1[10];
-  char name2[10];
-  char in1[10];
-  char in2[10];
-  char message[256];
-  char newname[10];
-  while(1){
-    while(clients < 2){
-      unlink(ACK);
-      if(mkfifo(ACK, 0666) == -1){
-        printf("ERROR1: %s\n", strerror(errno));
-        exit(1);
-      }
-      printf("Server created\n");
-      fifo = open(ACK, O_RDONLY);
-      if(read(fifo, name, 256) == -1){
-        printf("ERROR2: %s\n", strerror(errno));
-        exit(1);
-      }
-      close(fifo);
-      fifo = open(name, O_WRONLY);
-      if(fifo == -1){
-        printf("ERROR3: %s\n", strerror(errno));
-        exit(1);
-      }
-      if(write(fifo, "I gotchu", strlen("I gotchu")) == -1){
-        printf("ERROR4: %s\n", strerror(errno));
-        exit(1);
-      }
-      close(fifo);
-      fifo = open(ACK, O_RDONLY);
-      if(read(fifo, message, 256) == -1){
-        printf("ERROR5: %s\n", strerror(errno));
-        exit(1);
-      }
-      if(clients == 0){
-        strcpy(name1,name);
-      }else{
-        strcpy(name2,name);
-      }
-      close(fifo);
-      printf("Handshake Complete\n");
-
-      sprintf(newname, "%d", getpid() + clients);
-      if(clients == 0){
-        sprintf(in1, "%d", getpid() + clients);
-      }else{
-        sprintf(in2, "%d", getpid() + clients);
-      }
-      mkfifo(newname, 0666);
-      fifo = open(name, O_WRONLY);
-      if(fifo == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
-      }
-      if(write(fifo, newname, strlen(newname)) == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
-      }
-      close(fifo);
-      clients++;
-    }
-    int f = fork();
-    if(!f){
-      int fifo1 = open(name1, O_WRONLY);
-      if(write(fifo1, "ready", strlen("ready")) == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
-      }
-      close(fifo1);
-      int fifo2 = open(name2, O_WRONLY);
-      if(write(fifo2, "ready", strlen("ready")) == -1){
-        printf("ERROR: %s\n", strerror(errno));
-        exit(1);
-      }
-      close(fifo2);
-      f = fork();
-      if(f){
-        while(1){
-          fifo = open(in1, O_RDONLY);
-          char sig[10];
-          read(fifo, sig, 10);
-          close(fifo);
-          fifo = open(name2, O_WRONLY);
-          write(fifo, sig, strlen(sig));
-          close(fifo);
-        }
-      }else{
-        while(1){
-          fifo = open(in2, O_RDONLY);
-          char sig[10];
-          read(fifo, sig, 10);
-          close(fifo);
-          fifo = open(name1, O_WRONLY);
-          write(fifo, sig, strlen(sig));
-          close(fifo);
-        }
-      }
-    }else{
-      clients = 0;
-    }
+void error_check( int i, char *s ) {
+  if ( i < 0 ) {
+    printf("[%s] error %d: %s\n", s, errno, strerror(errno) );
+    exit(1);
   }
 }
 
+/*=========================
+  server_setup
+  args:
+  creates, binds a server side socket
+  and sets it to the listening state
+  returns the socket descriptor
+  =========================*/
+int server_setup() {
+  int sd, i;
+
+  //create the socket
+  sd = socket( AF_INET, SOCK_STREAM, 0 );
+  error_check( sd, "server socket" );
+  printf("[server] socket created\n");
+
+  int opt = 1;
+  setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt));
+
+  //setup structs for getaddrinfo
+  struct addrinfo * hints, * results;
+  hints = (struct addrinfo *)calloc(1, sizeof(struct addrinfo));
+  hints->ai_family = AF_INET;  //IPv4 address
+  hints->ai_socktype = SOCK_STREAM;  //TCP socket
+  hints->ai_flags = AI_PASSIVE;  //Use all valid addresses
+  getaddrinfo(NULL, PORT, hints, &results); //NULL means use local address
+
+  //bind the socket to address and port
+  i = bind( sd, results->ai_addr, results->ai_addrlen );
+  error_check( i, "server bind" );
+  printf("[server] socket bound\n");
+
+  //set socket to listen state
+  i = listen(sd, 10);
+  error_check( i, "server listen" );
+  printf("[server] socket in listen state\n");
+
+  //free the structs used by getaddrinfo
+  free(hints);
+  freeaddrinfo(results);
+  return sd;
+}
 
 
 /*=========================
-  client_handshake
-  args: int * to_server
-  Performs the client side pipe 3 way handshake.
-  Sets *to_server to the file descriptor for the upstream pipe.
-  returns the file descriptor for the downstream pipe.
+  server_connect
+  args: int sd
+  sd should refer to a socket in the listening state
+  run the accept call
+  returns the socket descriptor for the new socket connected
+  to the client.
   =========================*/
-void client_handshake() {
-  char name[10];
-  sprintf(name, "%d", getpid());
-  if(mkfifo(name, 0666) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  int fifo = open(ACK, O_WRONLY);
-  if(fifo == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  if(write(fifo, name, strlen(name)) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  close(fifo);
-  fifo = open(name, O_RDONLY);
-  if(fifo == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  char message[256];
-  if(read(fifo, message, 256) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  close(fifo);
-  fifo = open(ACK, O_WRONLY);
-  if(write(fifo, "Ayo", strlen("Ayo")) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  printf("Handshake Complete\n");
-  fifo = open(name, O_RDONLY);
-  if(fifo == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  char newname[10];
-  if(read(fifo, newname, 10) == -1){
-    printf("ERROR: %s\n", strerror(errno));
-    exit(1);
-  }
-  close(fifo);
+int server_connect(int sd) {
+  int client_socket;
+  socklen_t sock_size;
+  struct sockaddr_storage client_address;
 
-  char javapipeIN[10];
-  char javapipeOUT[10];
-  sprintf(javapipeIN, "%d", getpid() + 10);
-  sprintf(javapipeOUT, "%d", getpid() + 20);
-  mkfifo(javapipeIN, 0777);
-  mkfifo(javapipeOUT, 0777);
+  sock_size = sizeof(client_address);
+  client_socket = accept(sd, (struct sockaddr *)&client_address, &sock_size);
+  error_check(client_socket, "server accept");
 
-  //get username
-  printf("Enter username: ");
-  char user[100];
-  fgets(user, 100, stdin);
-  user[strlen(user)-1] = 0;
-  printf("\nWelcome, %s\n", user);
+  return client_socket;
+}
 
-  //game lobby
-  int playing = 1;
-  while (playing) {
-    printf("\nPick a game mode:\n1 : Single Player\n2 : PvP\n3 : Exit\n");
-    char gameMode[10];
-    fgets(gameMode, 10, stdin);
-    gameMode[strlen(gameMode)-1] = 0;
+/*=========================
+  client_setup
+  args: int * to_server
+  to_server is a string representing the server address
+  create and connect a socket to a server socket that is
+  in the listening state
+  returns the file descriptor for the socket
+  =========================*/
+int client_setup(char * server) {
+  int sd, i;
 
-    //CODE BELOW MIGHT BE CAUSING AN ERROR
+  //create the socket
+  sd = socket( AF_INET, SOCK_STREAM, 0 );
+  error_check( sd, "client socket" );
 
-    //single player
-    if (strcmp(gameMode,"1")==0) {
-      int f = fork();
-      if(!f){
-        chdir("/single");
-        char* command[4];
-        command[0] = "java";
-        command[1] = "Tetris";
-        command[2] = javapipeIN;
-        command[3] = NULL;
-        printf("starting game...\n");
-        execvp(command[0], command);
-      }else{
-        int status;
-        wait(&status);
-      }
-    }
+  //run getaddrinfo
+  /* hints->ai_flags not needed because the client
+     specifies the desired address. */
+  struct addrinfo * hints, * results;
+  hints = (struct addrinfo *)calloc(1, sizeof(struct addrinfo));
+  hints->ai_family = AF_INET;  //IPv4
+  hints->ai_socktype = SOCK_STREAM;  //TCP socket
+  getaddrinfo(server, PORT, hints, &results);
 
-    //PvP
-    if (strcmp(gameMode,"2")==0) {
-      int f = fork();
-      if(!f){
-        char* command[4];
-        command[0] = "java";
-        command[1] = "Tetris";
-        command[2] = javapipeIN;
-        command[3] = NULL;
-        printf("\nwaiting for other player to join\n");
-        fifo = open(name, O_RDONLY);
-        char ready[10];
-        if(read(fifo, ready, 256) == -1){
-          printf("ERROR: %s\n", strerror(errno));
-          exit(1);
-        }
-        printf("starting game...\n");
-        execvp(command[0], command);
-      }else{
-      }
-      f = fork();
-      if(f){
-        while(1){
-          fifo = open(javapipeIN, O_RDONLY);
-          char sig[10];
-          read(fifo, sig, 10);
-          close(fifo);
-          fifo = open(newname, O_WRONLY);
-          write(fifo, sig, strlen(sig));
-          close(fifo);
-        }
-      }else{
-        while(1){
-          fifo = open(name, O_RDONLY | O_NONBLOCK);
-          char sig[10];
-          read(fifo, sig, 10);
-          close(fifo);
-          fifo = open(javapipeOUT, O_WRONLY);
-          write(fifo, sig, strlen(sig));
-          close(fifo);
-        }
-      }
-    }
+  //connect to the server
+  //connect will bind the socket for us
+  i = connect( sd, results->ai_addr, results->ai_addrlen );
+  error_check( i, "client connect" );
 
-    /*tournament
-    if (strcmp(gameMode,"3")==0) {
-      //tells server to enlist person in a tournament
-      //server makes matches and pairs with an opponent
-      //run PvP
-      //wait for next opponent or display message saying your were dorpped from the tournament
-    }
-    */
+  free(hints);
+  freeaddrinfo(results);
 
-    //exiting
-    if (strcmp(gameMode,"3")==0) {
-      playing = 0;
-      printf("Goodbye, %s\n", user);
-      exit(0);
-    }
-
-  }
-
+  return sd;
 }

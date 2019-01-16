@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.io.*;
 public class Board extends JPanel implements ActionListener, KeyListener{
@@ -67,9 +68,9 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	setFocusable(true);
     	setFocusTraversalKeysEnabled(false);
 
-      //this.pid = pid;
-      network = new pipe(pid + 10, pid);
-      result = 0;
+	//this.pid = pid;
+	network = new pipe(pid + 10, pid);
+	result = 0;
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -79,24 +80,32 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
-      try{
-        int code = Integer.parseInt(network.nextLine());
-        if(code == 0){
-          result = 1;
-          end();
-        }
-      }catch(Exception e){
-      }
+	try{
+	    int code = Integer.parseInt(network.nextLine());
+	    if(code == 0){
+		result = 1;
+		end();
+	    }
+	    if(code == 1){
+		System.out.println("Opponent sent 1 line");
+	    }else{
+		System.out.println("Opponent sent " + code + " lines");
+	    }
+	    if(code >= 1 && code <= 4){
+		createLines(code);
+	    }
+	}catch(Exception e){
+	}
 
     	if(!moving){
-        if(curShape == null){
-          curShape = t.randGen();
+	    if(curShape == null){
+		curShape = t.randGen();
         	next.setShape(t.randGen());
-    	  }
+	    }
   	    curShape = next.getShape();
   	    next.setShape(t.randGen());
   	    moving = true;
-      }
+	}
 
     	//Creates the shape that is moving
     	for(int i=0; i<t.getLen(curShape, ori); i++){
@@ -107,22 +116,30 @@ public class Board extends JPanel implements ActionListener, KeyListener{
       		    g.setColor(Color.BLACK);
       		    g.drawRect(row,col,40,40);
       		}
-          row += 40;
-        }
-    	  col += 40;
-    	  row = xcor*40;
+		row += 40;
+	    }
+	    col += 40;
+	    row = xcor*40;
     	}
 
     	//Creates the shapes that are not moving and still on the board based on the numbers on the coordTable which correspond to its original shape
     	for(int y=0; y<20; y++){
     	    for(int x=0; x<10; x++){
-    		      if(coordTable[y][x] > 0){
-    		          g.setColor(t.getCol(coordTable[y][x]));
-          		    g.fillRect(x*40,y*40,40,40);
-          		    g.setColor(Color.BLACK);
-          		    g.drawRect(x*40,y*40,40,40);
-          		    g.drawRect((row*40)+1,(col*40)+1,40,40);
-          		}
+		if(coordTable[y][x] > 0){
+		    if(coordTable[y][x] == 10){
+			g.setColor(new Color(Color.GRAY.getRGB()));
+			g.fillRect(x*40,y*40,40,40);
+			g.setColor(Color.BLACK);
+			g.drawRect(x*40,y*40,40,40);
+			g.drawRect((row*40)+1,(col*40)+1,40,40);
+		    }else{
+			g.setColor(t.getCol(coordTable[y][x]));
+			g.fillRect(x*40,y*40,40,40);
+			g.setColor(Color.BLACK);
+			g.drawRect(x*40,y*40,40,40);
+			g.drawRect((row*40)+1,(col*40)+1,40,40);
+		    }
+		}
     	    }
     	}
     	int y = ycor;
@@ -132,8 +149,8 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	}
     	for(int i=0; i<t.getLen(curShape, orientation); i++){
     	    for(int j=0; j<t.getWid(curShape, orientation); j++){
-            if(t.getSquare(curShape,ori,i,j) == 1){
-    		          g.drawRect(x*40,(y-1)*40,40,40);
+		if(t.getSquare(curShape,ori,i,j) == 1){
+		    g.drawRect(x*40,(y-1)*40,40,40);
                 }
     		x++;
     	    }
@@ -180,6 +197,23 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	//If the game isn't over, then keep painting. This makes sure the game doesn't end whenever a new piece spawns
 	if(!end()){
 	    repaint();
+	}
+    }
+
+    private void createLines(int code){
+	while(code > 0){
+	    int index = (int)(Math.random() * 10);
+	    for(int y=0; y < 19; y++){
+		for(int x=0; x < 10; x++){
+		    coordTable[y][x] = coordTable[y+1][x];
+		}
+	    }
+	    for(int x=0; x<10; x++){
+		if(x != index){
+		    coordTable[19][x] = 10;
+		}
+	    }
+	    code--;
 	}
     }
 
@@ -387,7 +421,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    moveDown(row);
 	}
 
-  network.writeOut("" + lines);
+	network.writeOut("" + lines);
 
 	int multiplier = 0;
 	if(lines == 1){
@@ -486,16 +520,16 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     public boolean end(){
     	if((coordTable[0][4] >= 1 && coordTable[1][4] >= 1) || result == 1){
     	    timer.stop();
-          if(result != 1){
-            network.writeOut("" + 0);
-          }
+	    if(result != 1){
+		network.writeOut("" + 0);
+	    }
     	    return true;
     	}
     	return false;
     }
 
     public int win(){
-      return result;
+	return result;
     }
 
 }

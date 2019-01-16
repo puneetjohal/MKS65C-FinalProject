@@ -32,31 +32,26 @@ int main(int argc, char **argv) {
     fgets(gameMode, 10, stdin);
     gameMode[strlen(gameMode)-1] = 0;
 
-    char javapipeIN[10];
-    char javapipeOUT[10];
-    sprintf(javapipeIN, "%d", getpid() + 10);
-    sprintf(javapipeOUT, "%d", getpid() + 20);
-    mkfifo(javapipeIN, 0777);
-    mkfifo(javapipeOUT, 0777);
-
     //single player
     if (strcmp(gameMode,"1")==0) {
-      int f = fork();
-      if(!f){
-        chdir("/single");
-        char* command[4];
-        command[0] = "java";
-        command[1] = "Tetris";
-        command[2] = javapipeIN;
-        command[3] = NULL;
-        printf("starting game...\n");
-        execvp(command[0], command);
-      }else{
-      }
+      char* command[5];
+      command[0] = "java";
+      command[1] = "-cp";
+      command[2] = "single/";
+      command[3] = "Tetris";
+      command[4] = NULL;
+      printf("starting game...\n");
+      execvp(command[0], command);
     }
 
     //PvP
     if (strcmp(gameMode,"2")==0) {
+      char javapipeIN[10];
+      char javapipeOUT[10];
+      sprintf(javapipeIN, "%d", getpid() + 10);
+      sprintf(javapipeOUT, "%d", getpid() + 20);
+      mkfifo(javapipeIN, 0777);
+      mkfifo(javapipeOUT, 0777);
       if (argc == 2)
         server_socket = client_setup( argv[1]);
       else

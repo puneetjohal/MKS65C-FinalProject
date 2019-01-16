@@ -91,6 +91,7 @@ int main(int argc, char **argv) {
           read(server_socket, sig, 10);
           fifo = open(javapipeOUT, O_WRONLY);
           if(strcmp(sig, "0") == 0 || strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
+            printf("Your opponent attacked you!\n");
             write(fifo, sig, strlen(sig));
             strcpy(sig, "");
           }

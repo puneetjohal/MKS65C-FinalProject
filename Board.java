@@ -81,7 +81,6 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
       try{
         int code = Integer.parseInt(network.nextLine());
-        System.out.println(code);
         if(code == 0){
           result = 1;
           end();

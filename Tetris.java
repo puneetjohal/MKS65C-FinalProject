@@ -71,6 +71,7 @@ public class Tetris extends JFrame implements ActionListener{
     sidebar.setVisible(false);
     predictor.setVisible(false);
     held.setVisible(false);
+    matrix = null;
     pane.setLayout(new BorderLayout());
     pane.add(over, BorderLayout.PAGE_START);
     over.add(gameover);

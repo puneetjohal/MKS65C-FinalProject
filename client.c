@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
         command[2] = javapipeIN;
         command[3] = NULL;
         printf("\nwaiting for other player to join\n");
-        read(server_socket, buffer, sizeof(buffer));
+        printf("%d\n", read(server_socket, buffer, sizeof(buffer)));
         printf("starting game...\n");
         execvp(command[0], command);
       }else{

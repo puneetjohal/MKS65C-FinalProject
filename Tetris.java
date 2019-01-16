@@ -11,6 +11,7 @@ public class Tetris extends JFrame implements ActionListener{
   private JLabel nextPiece;
   private Timer timer;
   private JLabel  gameover;
+  private JLabel  win;
   private gameOverScreen over;
   private Board  matrix;
   private JPanel sidebar;
@@ -32,12 +33,15 @@ public class Tetris extends JFrame implements ActionListener{
     pane = this.getContentPane();
 
     score=new JLabel("Score:0 ");
-    gameover=new JLabel("GAMEOVER");
+    gameover=new JLabel("YOULOSE");
+    win=new JLabel("YOUWIN");
     level=new JLabel("Level:1");
     heldPiece=new JLabel("Hold Piece");
     nextPiece=new JLabel("Next Piece");
     gameover.setFont(new Font("Serif",Font.PLAIN,100));
     gameover.setForeground(Color.RED);
+    win.setFont(new Font("Serif",Font.PLAIN,100));
+    win.setForeground(Color.RED);
     sidebar=new JPanel();
 
     score.setFont(new Font("Serif",Font.PLAIN,50));
@@ -78,13 +82,28 @@ public class Tetris extends JFrame implements ActionListener{
     over.add(score);
     over.add(level);
   }
+  public void gameOverWin(){
+    matrix.setVisible(false);
+    sidebar.setVisible(false);
+    predictor.setVisible(false);
+    held.setVisible(false);
+    matrix = null;
+    pane.setLayout(new BorderLayout());
+    pane.add(over, BorderLayout.PAGE_START);
+    over.add(win);
+    over.add(score);
+    over.add(level);
+  }
   public void actionPerformed(ActionEvent e){
     String s=e.getActionCommand();
     if(s.equals("gameover?")){
       try{
         if(matrix.end()){
-          gameOver();
-
+          if(matrix.win() == 0){
+            gameOver();
+          }else{
+            gameOverWin();
+          }
         }
       }catch(NullPointerException E){}
     }

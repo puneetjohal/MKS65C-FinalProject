@@ -5,7 +5,6 @@ void subserver(int from_client_1, int from_client_2);
 int main() {
 
   int listen_socket = server_setup();
-  int clients = 0;
   int f;
 
   while (1) {
@@ -29,12 +28,18 @@ void subserver(int client_socket_1, int client_socket_2) {
 
   int f = fork();
   if(f){
-    read(client_socket_1, buffer, sizeof(buffer));
-    printf("subserver received: %s from c1\n", buffer);
-    write(client_socket_2, buffer, sizeof(buffer));
+    while(1){
+      read(client_socket_1, buffer, sizeof(buffer));
+      if(strcmp(buffer, "0") == 0 || strcmp(buffer, "1") == 0 || strcmp(buffer, "2") == 0 || strcmp(buffer, "3") == 0 || strcmp(buffer, "4") == 0){
+        write(client_socket_2, buffer, sizeof(buffer));
+      }
+    }
   }else{
-    read(client_socket_2, buffer, sizeof(buffer));
-    printf("subserver received: %s from c2\n", buffer);
-    write(client_socket_1, buffer, sizeof(buffer));
+    while(1){
+      read(client_socket_2, buffer, sizeof(buffer));
+      if(strcmp(buffer, "0") == 0 || strcmp(buffer, "1") == 0 || strcmp(buffer, "2") == 0 || strcmp(buffer, "3") == 0 || strcmp(buffer, "4") == 0){
+        write(client_socket_1, buffer, sizeof(buffer));
+      }
+    }
   }
 }

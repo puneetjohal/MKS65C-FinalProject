@@ -36,15 +36,9 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     //Used to call the functions needed to get the shapes and their dimensions
     private Tetrimino t;
 
+    //Networking pipe
     private pipe network;
-
-    //Scanner for reading from named pipe, Filewriter for writing to pipe
-    /*
-    private int pid;
-    private File f;
-    private Scanner in;
-    private FileWriter out;
-*/
+    private int result;
 
     //Creates the actual game
     public Board(Tetris parent, int pid) {
@@ -75,6 +69,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
       //this.pid = pid;
       network = new pipe(pid + 10, pid);
+      result = 0;
     }
 
     //Creates all the shapes currently on the board and the shape being moved
@@ -84,7 +79,15 @@ public class Board extends JPanel implements ActionListener, KeyListener{
     	int col = ycor*40+displacement;
     	int ori = orientation;
 
-      network.nextLine();
+      try{
+        int code = Integer.parseInt(network.nextLine());
+        System.out.println(code);
+        if(code == 0){
+          result = 1;
+          end();
+        }
+      }catch(Exception e){
+      }
 
     	if(!moving){
         if(curShape == null){
@@ -482,11 +485,18 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 
     //Check if the player lost and if they did then end the game
     public boolean end(){
-    	if(coordTable[0][4] >= 1 && coordTable[1][4] >= 1){
+    	if((coordTable[0][4] >= 1 && coordTable[1][4] >= 1) || result == 1){
     	    timer.stop();
-          network.writeOut("" + 0);
+          if(result != 1){
+            network.writeOut("" + 0);
+          }
     	    return true;
     	}
     	return false;
     }
+
+    public int win(){
+      return result;
+    }
+
 }

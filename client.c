@@ -82,18 +82,18 @@ int main(int argc, char **argv) {
           char sig[10];
           read(fifo, sig, 10);
           close(fifo);
-          printf("client received %s from tetris\n", sig);
           write(server_socket, sig, sizeof(sig));
         }
       }else{
         fcntl(server_socket, F_SETFL, O_NONBLOCK);
         while(1){
           char sig[10];
-          if(read(server_socket, sig, 10) != -1){
-            printf("client received %s from server\n", sig);
-          }
+          read(server_socket, sig, 10);
           fifo = open(javapipeOUT, O_WRONLY);
-          write(fifo, sig, strlen(sig));
+          if(strcmp(sig, "0") == 0 || strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
+            write(fifo, sig, strlen(sig));
+            strcpy(sig, "");
+          }
           close(fifo);
         }
       }

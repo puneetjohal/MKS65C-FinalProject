@@ -78,6 +78,10 @@ int main(int argc, char **argv) {
           read(fifo, sig, 10);
           close(fifo);
           write(server_socket, sig, sizeof(sig));
+          if(strcmp(sig, "0") == 0){
+            printf("You Lost!\n");
+            exit(0);
+          }
         }
       }else{
         fcntl(server_socket, F_SETFL, O_NONBLOCK);
@@ -85,7 +89,15 @@ int main(int argc, char **argv) {
           char sig[10];
           read(server_socket, sig, 10);
           fifo = open(javapipeOUT, O_WRONLY);
-          if(strcmp(sig, "0") == 0 || strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
+          if(strcmp(sig, "0") == 0){
+            printf("You Won1!\n");
+            write(fifo, sig, strlen(sig));
+            printf("You Won2!\n");
+            close(fifo);
+            printf("You Won3!\n");
+            exit(0);
+          }
+          if(strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
             printf("Your opponent attacked you!\n");
             write(fifo, sig, strlen(sig));
             strcpy(sig, "");

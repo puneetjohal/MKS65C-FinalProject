@@ -88,7 +88,7 @@ public class Board extends JPanel implements ActionListener, KeyListener{
 	    }
 	    if(code == 1){
 		System.out.println("Opponent sent 1 line");
-	    }else{
+  }else if(code != 0){
 		System.out.println("Opponent sent " + code + " lines");
 	    }
 	    if(code >= 1 && code <= 4){

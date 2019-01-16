@@ -10,13 +10,7 @@ public class pipe{
   public pipe(int pid_in, int pid_out){
     path1 = Paths.get("" + pid_in);
     path2 = Paths.get("" + pid_out);
-    System.out.println(path1);
-    System.out.println(path2);
     f = new File("" + pid_out);
-  }
-  public boolean hasNext(){
-    boolean next = false;
-    return next;
   }
   public String nextLine(){
     String input = null;
@@ -33,7 +27,6 @@ public class pipe{
       out.write(output);
       out.flush();
       out.close();
-      System.out.println("Sent message: " + output);
     }catch(Exception e){
     }
   }

@@ -139,7 +139,6 @@ int main(int argc, char **argv) {
           write(server_socket, sig, sizeof(sig));
           if(strcmp(sig, "0") == 0){
             printf("You Lost!\n");
-	    break;
           }
         }
       }else{
@@ -161,12 +160,7 @@ int main(int argc, char **argv) {
           }
           close(fifo);
         }
-
-	if (argc == 2)
-	  server_socket = client_setup( argv[1]);
-	else
-	  server_socket = client_setup( TEST_IP );
-        int f = fork();
+        f = fork();
         if(!f){
           char* command[4];
           command[0] = "java";

@@ -7,7 +7,7 @@ server: basic_server.o pipe_networking.o
 	gcc -o server basic_server.o pipe_networking.o
 
 tournament_server: tournament_server.o pipe_networking.o
-		gcc -o server tournament_server.o pipe_networking.o
+		gcc -o tournament_server tournament_server.o pipe_networking.o
 
 Tetris.class: Tetris.java
 	javac Tetris.java

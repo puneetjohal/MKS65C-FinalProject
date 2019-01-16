@@ -80,7 +80,6 @@ int main(int argc, char **argv) {
           write(server_socket, sig, sizeof(sig));
           if(strcmp(sig, "0") == 0){
             printf("You Lost!\n");
-            exit(0);
           }
         }
       }else{
@@ -140,7 +139,7 @@ int main(int argc, char **argv) {
           write(server_socket, sig, sizeof(sig));
           if(strcmp(sig, "0") == 0){
             printf("You Lost!\n");
-            exit(0);
+	    break;
           }
         }
       }else{
@@ -162,11 +161,11 @@ int main(int argc, char **argv) {
           }
           close(fifo);
         }
-        if (argc == 2)
-          server_socket = client_setup( argv[1] );
-        else
-          server_socket = client_setup( TEST_IP );
-        int fifo;
+
+	if (argc == 2)
+	  server_socket = client_setup( argv[1]);
+	else
+	  server_socket = client_setup( TEST_IP );
         int f = fork();
         if(!f){
           char* command[4];
@@ -187,14 +186,15 @@ int main(int argc, char **argv) {
             char sig[10];
             read(fifo, sig, 10);
             close(fifo);
-            write(server_socket, sig, sizeof(sig));
+	    if(strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
+	      write(server_socket, sig, sizeof(sig));
+	    }
             if(strcmp(sig, "0") == 0){
               printf("You Lost!\n");
-              exit(0);
+              break;
             }
           }
         }else{
-          fcntl(server_socket, F_SETFL, O_NONBLOCK);
           while(1){
             char sig[10];
             read(server_socket, sig, 10);

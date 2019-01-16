@@ -31,8 +31,8 @@ void subserver(int client_socket_1, int client_socket_2, int client_socket_3, in
   write(client_socket_3, "ready", sizeof("ready"));
   write(client_socket_4, "ready", sizeof("ready"));
 
-  int shmid1 = shmget(525600, 2, 0666 | IPC_CREAT);
-  int shmid2 = shmget(525601, 2, 0666 | IPC_CREAT);
+  //int shmid1 = shmget(525600, 2, 0666 | IPC_CREAT);
+  //int shmid2 = shmget(525601, 2, 0666 | IPC_CREAT);
 
   int f = fork();
   if(f){
@@ -45,12 +45,14 @@ void subserver(int client_socket_1, int client_socket_2, int client_socket_3, in
           if(strcmp(buffer, "0") == 0 || strcmp(buffer, "1") == 0 || strcmp(buffer, "2") == 0 || strcmp(buffer, "3") == 0 || strcmp(buffer, "4") == 0){
             write(client_socket_2, buffer, sizeof(buffer));
           }
+	  /*
           if(strcmp(buffer, "0") == 0){
             char* data1 = shmat(shmid1, 0, 0);
             strcpy(data1, "2");
             shmdt(data1);
             exit(0);
           }
+	  */
         }
       }else{
         while(1){
@@ -58,12 +60,14 @@ void subserver(int client_socket_1, int client_socket_2, int client_socket_3, in
           if(strcmp(buffer, "0") == 0 || strcmp(buffer, "1") == 0 || strcmp(buffer, "2") == 0 || strcmp(buffer, "3") == 0 || strcmp(buffer, "4") == 0){
             write(client_socket_4, buffer, sizeof(buffer));
           }
+	  /*
           if(strcmp(buffer, "0") == 0){
             char* data2 = shmat(shmid2, 0, 0);
             strcpy(data2, "4");
             shmdt(data2);
             exit(0);
           }
+	  */
         }
       }
     }else{
@@ -74,12 +78,14 @@ void subserver(int client_socket_1, int client_socket_2, int client_socket_3, in
           if(strcmp(buffer, "0") == 0 || strcmp(buffer, "1") == 0 || strcmp(buffer, "2") == 0 || strcmp(buffer, "3") == 0 || strcmp(buffer, "4") == 0){
             write(client_socket_1, buffer, sizeof(buffer));
           }
+	  /*
           if(strcmp(buffer, "0") == 0){
             char* data1 = shmat(shmid1, 0, 0);
             strcpy(data1, "1");
             shmdt(data1);
             exit(0);
           }
+	  */
         }
       }else{
         while(1){
@@ -87,18 +93,21 @@ void subserver(int client_socket_1, int client_socket_2, int client_socket_3, in
           if(strcmp(buffer, "0") == 0 || strcmp(buffer, "1") == 0 || strcmp(buffer, "2") == 0 || strcmp(buffer, "3") == 0 || strcmp(buffer, "4") == 0){
             write(client_socket_3, buffer, sizeof(buffer));
           }
+	  /*
           if(strcmp(buffer, "0") == 0){
             char* data2 = shmat(shmid2, 0, 0);
             strcpy(data2, "3");
             shmdt(data2);
             exit(0);
           }
+	  */
         }
       }
     }
   }else{
     int status;
     wait(&status);
+    /*
     char* data1 = shmat(shmid1, 0, 0);
     char* data2 = shmat(shmid2, 0, 0);
     int winner_1;
@@ -118,7 +127,11 @@ void subserver(int client_socket_1, int client_socket_2, int client_socket_3, in
 
     shmdt(data1);
     shmdt(data2);
-
+    */
+    int listen_socket = server_setup();
+    int winner_1 = server_connect(listen_socket);
+    int winner_2 = server_connect(listen_socket);
+    
     write(winner_1, "ready", sizeof("ready"));
     write(winner_2, "ready", sizeof("ready"));
 

@@ -168,10 +168,16 @@ int main(int argc, char **argv) {
           command[2] = javapipeIN;
           command[3] = NULL;
           printf("\nwaiting for other player to join\n");
-          while(read(server_socket, buffer, sizeof(buffer)) == -1);
+          strcpy(buffer, "");
+          while(strcmp(buffer, "ready") != 0){
+            read(server_socket, buffer, sizeof(buffer));
+          }
           printf("starting game...\n");
           execvp(command[0], command);
         }else{
+          int op = O_NONBLOCK;
+          op ^= O_NONBLOCK;
+          fcntl(server_socket, F_SETFL, op);
         }
         f = fork();
         if(f){
@@ -180,15 +186,16 @@ int main(int argc, char **argv) {
             char sig[10];
             read(fifo, sig, 10);
             close(fifo);
-	    if(strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
-	      write(server_socket, sig, sizeof(sig));
-	    }
+      	    if(strcmp(sig, "1") == 0 || strcmp(sig, "2") == 0 || strcmp(sig, "3") == 0 || strcmp(sig, "4") == 0){
+      	      write(server_socket, sig, sizeof(sig));
+      	    }
             if(strcmp(sig, "0") == 0){
               printf("You Lost!\n");
               break;
             }
           }
         }else{
+          fcntl(server_socket, F_SETFL, O_NONBLOCK);
           while(1){
             char sig[10];
             read(server_socket, sig, 10);

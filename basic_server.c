@@ -22,7 +22,6 @@ int main() {
 void subserver(int client_socket_1, int client_socket_2) {
   char buffer[BUFFER_SIZE];
 
-
   write(client_socket_1, "ready", sizeof("ready"));
   write(client_socket_2, "ready", sizeof("ready"));
 
